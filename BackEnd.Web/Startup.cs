@@ -24,6 +24,13 @@ using System.IO;
 using System.Reflection;
 using BackEnd.Service.ISercice;
 using BackEnd.Service.Service;
+using BackEnd.Service;
+using BackEnd.BAL.Interfaces;
+using BackEnd.BAL.Repository;
+using AutoMapper;
+using BackEnd.Service.MappingProfiles;
+using EmailService;
+using BackEnd.Service.IService;
 
 namespace BackEnd.Web
 {
@@ -82,9 +89,37 @@ namespace BackEnd.Web
       // Generic Config
       services.AddTransient<IBackEndContext, BakEndContext>();
       services.AddTransient(typeof( RoleManager<>), typeof( IdentityRole<>));
-      
-      //----------------------------swagger-------------------------------------
-      services.AddSwaggerGen(x =>
+            #region services
+            services.AddScoped<IResponseDTO, ResponseDTO>();
+            services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
+            var mapperConfig = new MapperConfiguration(mc =>
+            {
+                mc.AddProfile(new MappingProfiles());
+            });
+
+            IMapper mapper = mapperConfig.CreateMapper();
+            services.AddSingleton(mapper);
+            #endregion
+            #region CorsPolicy
+            services.AddCors(options =>
+            {
+                options.AddPolicy("CorsPolicy",
+                    builder => builder.WithOrigins(Configuration["ApplicationSettings:Client_URL"].ToString())
+                    .AllowAnyMethod()
+                    .AllowAnyHeader()
+                    .AllowCredentials());
+            });
+            #endregion
+            var emailConfig = Configuration
+            .GetSection("EmailConfiguration")
+            .Get<EmailConfiguration>();
+            services.AddSingleton(emailConfig);
+            services.AddScoped<IEmailSender, EmailSender>();
+            services.AddScoped<IemailService, emailService>();
+            services.AddScoped<IidentityServices, IdentityServices>();
+            //----------------------------swagger-------------------------------------
+            services.AddSwaggerGen(x =>
       {
         x.SwaggerDoc("v1", new OpenApiInfo { Title = "project Api", Version = "v1" });
         //-----------------------------start jwtSettings swagger ---------------------------------
@@ -152,7 +187,9 @@ namespace BackEnd.Web
       });
       //----------------------------end jwtSettings-------------------------------------
       services.AddScoped<IidentityServices, IdentityServices>();
-    }
+            services.AddTransient<IBackEndContext, BakEndContext>();
+            services.AddTransient(typeof(RoleManager<>), typeof(IdentityRole<>));
+        }
 
 
     // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

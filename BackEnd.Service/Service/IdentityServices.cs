@@ -231,6 +231,23 @@ namespace BackEnd.Service.Service
             int num = _random.Next();
             return await _emailService.sendVerfication(num, Email);
         }
+        
+
+        public async Task<Result> verfayUser(UserVerfayRequest request)
+        {
+            var user = await _userManager.FindByEmailAsync(request.Email);
+            if (user.verficationCode == request.verficationCode)
+            {
+                user.confirmed = true;
+                await _userManager.UpdateAsync(user);
+                return new Result { success = true, data = user, code = 200, message = "ok" };
+            }
+            else
+            {
+                return new Result { success = false, data = user, code = 400, message = "Falied" };
+            }
+
+        }
 
         public IResponseDTO GetRoles()
         {

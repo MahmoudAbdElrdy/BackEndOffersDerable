@@ -30,7 +30,14 @@ namespace Project.Controllers.V1
             authResponse.Data = authResponse.Data;
             return authResponse;
         }
-      
+        [HttpPost("api/GetRoles")]
+        public IResponseDTO GetRoles()
+        {
+
+            var authResponse =  _identityService.GetRoles();
+          
+            return authResponse;
+        }
         [HttpPost("api/Login")]
         public async Task<IResponseDTO> Login([FromBody] UserLoginRequest request)
         {

@@ -11,6 +11,7 @@ namespace BackEnd.Service.ISercice
         Task<IResponseDTO> RegisterAsync(string Role , string FirstName, string LastName, string Email, string Password, string Image, string PhoneNumber);
         Task<AuthenticationResult> LoginAsync(string Email, string Password);
         IResponseDTO GetRoles();
-
+        Task<Boolean> sendVerficationToEMail(string Email);
+        Task<Result> verfayUser(UserVerfayRequest request);
     }
 }
