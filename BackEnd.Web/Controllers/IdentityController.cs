@@ -47,13 +47,13 @@ namespace Project.Controllers.V1
 
                 _response.Data = authResponse;
                 _response.Message = authResponse.Message;
-                _response.Code = authResponse.Code;
+                _response.Code = 200;
             }
             else
             {
                 _response.Data = authResponse;
                 _response.Message = authResponse.Message;
-                _response.Code = authResponse.Code;
+                _response.Code =400;
             }
 
             return _response;

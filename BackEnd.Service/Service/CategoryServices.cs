@@ -125,8 +125,11 @@ namespace BackEnd.Service.Service
             try
             {
                 var Dto = _mapper.Map<Category>(model);
-              //  Dto.CreationDate = DateTime.Now;
-
+                //  Dto.CreationDate = DateTime.Now;
+                if (model.ParentId == null || model.ParentId == 0)
+                {
+                    Dto.Parent = null;
+                }
                 var DBmodel =  _unitOfWork.Category.Insert(Dto);
 
                 var save =  _unitOfWork.Save();
@@ -228,16 +231,6 @@ namespace BackEnd.Service.Service
             }
             return _response;
         }
-
-       
-
-       
-        public IResponseDTO GetAvailableCategoryWithSupCategory()
-        {
-            throw new NotImplementedException();
-        }
-
-       
 
        
         #endregion

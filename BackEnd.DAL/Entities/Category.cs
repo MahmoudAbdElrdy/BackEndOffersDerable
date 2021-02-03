@@ -8,7 +8,7 @@ namespace BackEnd.DAL.Entities
     {
         public string CategoryName{ get; set; }
         public int? ParentId { get; set; }
-        public virtual Category Parent { get; set; }
+        public  Category Parent { get; set; }
         // public string Image{ get; set; } 
         public ICollection<Product> Products { get; set; }
     }
