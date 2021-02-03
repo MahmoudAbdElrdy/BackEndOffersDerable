@@ -24,4 +24,14 @@ namespace BackEnd.Service.DTO.Prodcuts
         public string CompanyName { get; set; }
         public List<string> ProductImages { get; set; }
     }
+    public class ShowListProductDto 
+    {
+        public int Id { get; set; }
+        public string ProdcutName { get; set; }
+        public string ProdcutDescription { get; set; } 
+        public double? NewPrice { get; set; }
+        public double? OldPrice { get; set; } 
+        public string ProductImage  { get; set; }
+        public int ProductId { get; set; }
+    }
 }

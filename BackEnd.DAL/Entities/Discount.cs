@@ -14,6 +14,6 @@ namespace BackEnd.DAL.Entities
         public DateTime? SatrtDate { get; set; }
         public DateTime? EndDate{ get; set; }
         public int? ProductId { get; set; }
-        public List<Product> Product { get; set; }
+        public Product Product { get; set; }
     }
 }

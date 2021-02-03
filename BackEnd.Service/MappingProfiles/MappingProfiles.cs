@@ -29,6 +29,14 @@ namespace BackEnd.Service.MappingProfiles
             CreateMap<Product, ProductDto>().ReverseMap();
             CreateMap<Discount, DiscountDto>().ReverseMap();
             CreateMap<Discount, ShowDiscountDto>().ReverseMap();
+            CreateMap<Discount, ShowListProductDto>()
+           .ForMember(dest=>dest.ProdcutDescription,m=>m.MapFrom(x=>x.Product.Description))
+           .ForMember(dest=>dest.OldPrice,m=>m.MapFrom(x=>x.Product.Price))
+           .ForMember(dest=>dest.ProductId,m=>m.MapFrom(x=>x.Product.Id))
+           .ForMember(dest=>dest.ProdcutName,m=>m.MapFrom(x=>x.Product.ProdcutName))
+           .ForMember(dest=>dest.ProductImage,m=>m.MapFrom(x=>x.Product.ProductImages.FirstOrDefault().ProductImage))
+           .ForMember(dest=>dest.NewPrice,m=>m.MapFrom(x=> (int)x.DiscountType==1?x.Product.Price-x.DiscountValue:(x.Product.Price-(x.Product.Price * (x.DiscountValue / 100)))))
+                ;
 
         }
 

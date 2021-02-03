@@ -246,13 +246,14 @@ namespace BackEnd.Service.Service
         {
             try 
             {
-                var Category = _unitOfWork.Category.Get().ToList();
-                var CatDto= _mapper.Map<List<CategoryDto>>(Category);
+                //var Category = _unitOfWork.Category.Get().ToList();
+                //var CatDto= _mapper.Map<List<CategoryDto>>(Category);
                 
-                var result = _unitOfWork.Discount.Get(x => x.IsDelete == false,includeProperties:"", page: pageNumber, Take: pageSize).ToList();
+                var result = _unitOfWork.Discount.Get(x => x.IsDelete == false,includeProperties: "Product.ProductImages", page: pageNumber, Take: pageSize).ToList();
                 if (result != null && result.Count > 0)
                 {
-                    var resultList = _mapper.Map<List<DiscountDto>>(result);
+                    var resultList = _mapper.Map<List<ShowListProductDto>>(result);
+                    
                     _response.Data = resultList;
                     _response.Code = 200;
                     _response.Message = "OK";

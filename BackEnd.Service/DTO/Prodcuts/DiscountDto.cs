@@ -25,6 +25,12 @@ namespace BackEnd.Service.DTO.Prodcuts
         public string DiscountDescription { get; set; }
         public DateTime? SatrtDate { get; set; }
         public DateTime? EndDate { get; set; }
-        public string ProductName { get; set; } 
+        public string ProductName { get; set; }
+        public int ProdcutId { get; set; }
+        public string ProdcutDescription{ get; set; }
+        public string ProdcutImage{ get; set; } 
+        public double? ProdcutPrice{ get; set; }
+        public double? ProdcutNewPrice{ get; set; } 
+        // public List<CategoryDto> Categories { get; set; }
     }
 }

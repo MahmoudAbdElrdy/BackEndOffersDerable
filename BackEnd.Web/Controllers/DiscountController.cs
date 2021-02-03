@@ -34,7 +34,14 @@ namespace BackEnd.Web.Controllers
             return result;
         }
         #endregion
-      
+        #region Get : api/Discount/GetAll
+        [HttpGet("GetAllProdcut")]
+        public IResponseDTO GetAllProdcut(int pageNumber = 0, int pageSize = 0)
+        {
+            var result = ServicesDiscount.GetAllProdcut(pageNumber, pageSize);
+            return result;
+        }
+        #endregion
         #region Get : api/Discount/GetById
         [HttpGet("GetById")]
         public IResponseDTO GetById(int id)
