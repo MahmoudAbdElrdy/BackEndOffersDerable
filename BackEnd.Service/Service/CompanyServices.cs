@@ -1,7 +1,8 @@
 ﻿using AutoMapper;
 using BackEnd.BAL.Interfaces;
 using BackEnd.DAL.Entities;
-using BackEnd.Service.DTO.Prodcuts;
+using BackEnd.Service.DTO.Companies;
+using BackEnd.Service.ISercice;
 using BackEnd.Service.IService;
 using System;
 using System.Collections.Generic;
@@ -11,14 +12,14 @@ using System.Threading.Tasks;
 
 namespace BackEnd.Service.Service
 {
-   public class CategoryServices : BaseServices, ICategoryServices
+   public class CompanyServices : BaseServices, ICompanyServices
     {
-
-        #region ServicesCategory(IUnitOfWork unitOfWork, IResponseDTO responseDTO, IMapper mapper)
-        public CategoryServices(IUnitOfWork unitOfWork, IResponseDTO responseDTO, IMapper mapper)
+        private IidentityServices identityServices;
+        #region ServicesCompany(IUnitOfWork unitOfWork, IResponseDTO responseDTO, IMapper mapper)
+        public CompanyServices(IUnitOfWork unitOfWork, IResponseDTO responseDTO, IMapper mapper, IidentityServices _identityServices)
             : base(unitOfWork, responseDTO, mapper)
         {
-
+            identityServices = _identityServices;
 
         }
         #endregion
@@ -28,10 +29,10 @@ namespace BackEnd.Service.Service
         {
             try
             {
-                var result = _unitOfWork.Category.Get(x => x.IsDelete == false, page: pageNumber, Take: pageSize).ToList();
+                var result = _unitOfWork.Company.Get(x => x.IsDelete == false,includeProperties: "User", page: pageNumber, Take: pageSize).ToList();
                 if (result != null && result.Count > 0)
                 {
-                    var resultList = _mapper.Map<List<CategoryDto>>(result);
+                    var resultList = _mapper.Map<List<ShowCompanyDto>>(result);
                     _response.Data = resultList;
                     _response.Code = 200;
                     _response.Message = "OK";
@@ -55,13 +56,13 @@ namespace BackEnd.Service.Service
         #endregion
 
  
-        #region Remove(CategoryDto model)
-        public IResponseDTO Remove(CategoryDto model)
+        #region Remove(CompanyDto model)
+        public IResponseDTO Remove(CompanyDto model)
         {
             try
             {
-                var DBmodel = _mapper.Map<Category>(model);
-                _unitOfWork.Category.Delete(DBmodel);
+                var DBmodel = _mapper.Map<Company>(model);
+                _unitOfWork.Company.Delete(DBmodel);
                 var save = _unitOfWork.Save();
                 if (save == "200")
                 {
@@ -93,11 +94,11 @@ namespace BackEnd.Service.Service
         {
             try
             {
-                var DBmodel = _unitOfWork.Category.Get(x => x.Id == id && x.IsDelete == false).FirstOrDefault();
+                var DBmodel = _unitOfWork.Company.Get(x => x.Id == id && x.IsDelete == false).FirstOrDefault();
                 if (DBmodel != null)
                 {
-                    var CategoryDto = _mapper.Map<CategoryDto>(DBmodel);
-                    _response.Data = CategoryDto;
+                    var CompanyDto = _mapper.Map<CompanyDto>(DBmodel);
+                    _response.Data = CompanyDto;
                     _response.Code = 200;
                     _response.Message = "OK";
                 }
@@ -119,32 +120,43 @@ namespace BackEnd.Service.Service
         }
         #endregion
 
-        #region InsertAsync(CategoryDto model)
-        public  IResponseDTO Insert(CategoryDto model)
+        #region InsertAsync(CompanyDto model)
+        public async Task<IResponseDTO> Insert(CompanyDto model)
         {
             try
             {
-                var Dto = _mapper.Map<Category>(model);
-              //  Dto.CreationDate = DateTime.Now;
-
-                var DBmodel =  _unitOfWork.Category.Insert(Dto);
-
-                var save =  _unitOfWork.Save();
-
-                if (save == "200")
+                model.User.Role = "Company";
+                var insertUser=await identityServices.
+                    RegisterAsync(model.User.Role, model.User.FullName, model.User.UserName, model.User.Email, model.User.Password, model.User.Image, model.User.PhoneNumber);
+             if(insertUser.Code == 200)
                 {
-                    var CategoryDto = _mapper.Map<CategoryDto>(Dto);
-                    _response.Data = CategoryDto;
-                    _response.Code = 200;
-                    _response.Message = "OK";
+
+                    var Dto = new Company();
+                    Dto.ApplicationUserId = insertUser.Data;
+                    Dto.CompanyDescription = model.CompanyDescription;
+                    Dto.Latitude = model.Latitude;
+                    Dto.Longitude = model.Longitude;
+
+                    var DBmodel = _unitOfWork.Company.Insert(Dto);
+
+                    var save = _unitOfWork.Save();
+
+                    if (save == "200")
+                    {
+                        var CompanyDto = model;
+                        _response.Data = CompanyDto;
+                        _response.Code = 200;
+                        _response.Message = "OK";
+                    }
+                    else
+                    {
+                        _response.Data = null;
+                        _response.Message = save;
+                        _response.Code = 400;
+
+                    }
                 }
-                else
-                {
-                    _response.Data = null;
-                    _response.Message = save;
-                   _response.Code = 400;
-                 
-                }
+               
             }
             catch (Exception ex)
             {
@@ -157,15 +169,15 @@ namespace BackEnd.Service.Service
         }
         #endregion
 
-        #region Update(CategoryDto model)
-        public IResponseDTO Update(CategoryDto model)
+        #region Update(CompanyDto model)
+        public IResponseDTO Update(CompanyDto model)
         {
             try
             {
                 
-                var DbCategory = _mapper.Map<Category>(model);
-                DbCategory.LastEditDate = DateTime.UtcNow.AddHours(2);
-                _unitOfWork.Category.Update(DbCategory);
+                var DbCompany = _mapper.Map<Company>(model);
+                DbCompany.LastEditDate = DateTime.UtcNow.AddHours(2);
+                _unitOfWork.Company.Update(DbCompany);
                 var save = _unitOfWork.Save();
 
                 if (save == "200")
@@ -193,16 +205,16 @@ namespace BackEnd.Service.Service
         }
         #endregion
 
-        #region Delete(CategoryDto model)
+        #region Delete(CompanyDto model)
         public IResponseDTO Delete(int id)
         {
             try
             {
                
-                var DbCategory = _unitOfWork.Category.GetByID(id);
-                DbCategory.IsDelete = true;
-                DbCategory.LastEditDate = DateTime.UtcNow.AddHours(2);
-                _unitOfWork.Category.Delete(DbCategory);
+                var DbCompany = _unitOfWork.Company.GetByID(id);
+                DbCompany.IsDelete = true;
+                DbCompany.LastEditDate = DateTime.UtcNow.AddHours(2);
+                _unitOfWork.Company.Delete(DbCompany);
                 var save = _unitOfWork.Save();
 
                 if (save == "200")
@@ -232,7 +244,7 @@ namespace BackEnd.Service.Service
        
 
        
-        public IResponseDTO GetAvailableCategoryWithSupCategory()
+        public IResponseDTO GetAvailableCompanyWithSupCompany()
         {
             throw new NotImplementedException();
         }

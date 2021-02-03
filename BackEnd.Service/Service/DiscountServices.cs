@@ -11,11 +11,11 @@ using System.Threading.Tasks;
 
 namespace BackEnd.Service.Service
 {
-   public class CategoryServices : BaseServices, ICategoryServices
+   public class DiscountServices : BaseServices, IServiceDiscount
     {
 
-        #region ServicesCategory(IUnitOfWork unitOfWork, IResponseDTO responseDTO, IMapper mapper)
-        public CategoryServices(IUnitOfWork unitOfWork, IResponseDTO responseDTO, IMapper mapper)
+        #region ServicesDiscount(IUnitOfWork unitOfWork, IResponseDTO responseDTO, IMapper mapper)
+        public DiscountServices(IUnitOfWork unitOfWork, IResponseDTO responseDTO, IMapper mapper)
             : base(unitOfWork, responseDTO, mapper)
         {
 
@@ -28,10 +28,10 @@ namespace BackEnd.Service.Service
         {
             try
             {
-                var result = _unitOfWork.Category.Get(x => x.IsDelete == false, page: pageNumber, Take: pageSize).ToList();
+                var result = _unitOfWork.Discount.Get(x => x.IsDelete == false, page: pageNumber, Take: pageSize).ToList();
                 if (result != null && result.Count > 0)
                 {
-                    var resultList = _mapper.Map<List<CategoryDto>>(result);
+                    var resultList = _mapper.Map<List<DiscountDto>>(result);
                     _response.Data = resultList;
                     _response.Code = 200;
                     _response.Message = "OK";
@@ -55,13 +55,13 @@ namespace BackEnd.Service.Service
         #endregion
 
  
-        #region Remove(CategoryDto model)
-        public IResponseDTO Remove(CategoryDto model)
+        #region Remove(DiscountDto model)
+        public IResponseDTO Remove(DiscountDto model)
         {
             try
             {
-                var DBmodel = _mapper.Map<Category>(model);
-                _unitOfWork.Category.Delete(DBmodel);
+                var DBmodel = _mapper.Map<Discount>(model);
+                _unitOfWork.Discount.Delete(DBmodel);
                 var save = _unitOfWork.Save();
                 if (save == "200")
                 {
@@ -93,11 +93,11 @@ namespace BackEnd.Service.Service
         {
             try
             {
-                var DBmodel = _unitOfWork.Category.Get(x => x.Id == id && x.IsDelete == false).FirstOrDefault();
+                var DBmodel = _unitOfWork.Discount.Get(x => x.Id == id && x.IsDelete == false).FirstOrDefault();
                 if (DBmodel != null)
                 {
-                    var CategoryDto = _mapper.Map<CategoryDto>(DBmodel);
-                    _response.Data = CategoryDto;
+                    var DiscountDto = _mapper.Map<DiscountDto>(DBmodel);
+                    _response.Data = DiscountDto;
                     _response.Code = 200;
                     _response.Message = "OK";
                 }
@@ -119,22 +119,22 @@ namespace BackEnd.Service.Service
         }
         #endregion
 
-        #region InsertAsync(CategoryDto model)
-        public  IResponseDTO Insert(CategoryDto model)
+        #region InsertAsync(DiscountDto model)
+        public  IResponseDTO Insert(DiscountDto model)
         {
             try
             {
-                var Dto = _mapper.Map<Category>(model);
+                var Dto = _mapper.Map<Discount>(model);
               //  Dto.CreationDate = DateTime.Now;
 
-                var DBmodel =  _unitOfWork.Category.Insert(Dto);
+                var DBmodel =  _unitOfWork.Discount.Insert(Dto);
 
                 var save =  _unitOfWork.Save();
 
                 if (save == "200")
                 {
-                    var CategoryDto = _mapper.Map<CategoryDto>(Dto);
-                    _response.Data = CategoryDto;
+                    var DiscountDto = _mapper.Map<DiscountDto>(Dto);
+                    _response.Data = DiscountDto;
                     _response.Code = 200;
                     _response.Message = "OK";
                 }
@@ -157,15 +157,15 @@ namespace BackEnd.Service.Service
         }
         #endregion
 
-        #region Update(CategoryDto model)
-        public IResponseDTO Update(CategoryDto model)
+        #region Update(DiscountDto model)
+        public IResponseDTO Update(DiscountDto model)
         {
             try
             {
                 
-                var DbCategory = _mapper.Map<Category>(model);
-                DbCategory.LastEditDate = DateTime.UtcNow.AddHours(2);
-                _unitOfWork.Category.Update(DbCategory);
+                var DbDiscount = _mapper.Map<Discount>(model);
+                DbDiscount.LastEditDate = DateTime.UtcNow.AddHours(2);
+                _unitOfWork.Discount.Update(DbDiscount);
                 var save = _unitOfWork.Save();
 
                 if (save == "200")
@@ -193,16 +193,16 @@ namespace BackEnd.Service.Service
         }
         #endregion
 
-        #region Delete(CategoryDto model)
+        #region Delete(DiscountDto model)
         public IResponseDTO Delete(int id)
         {
             try
             {
                
-                var DbCategory = _unitOfWork.Category.GetByID(id);
-                DbCategory.IsDelete = true;
-                DbCategory.LastEditDate = DateTime.UtcNow.AddHours(2);
-                _unitOfWork.Category.Delete(DbCategory);
+                var DbDiscount = _unitOfWork.Discount.GetByID(id);
+                DbDiscount.IsDelete = true;
+                DbDiscount.LastEditDate = DateTime.UtcNow.AddHours(2);
+                _unitOfWork.Discount.Delete(DbDiscount);
                 var save = _unitOfWork.Save();
 
                 if (save == "200")
@@ -232,14 +232,46 @@ namespace BackEnd.Service.Service
        
 
        
-        public IResponseDTO GetAvailableCategoryWithSupCategory()
+        public IResponseDTO GetAvailableDiscountWithSupDiscount()
         {
             throw new NotImplementedException();
         }
 
-       
 
-       
+
+
         #endregion
+
+        public IResponseDTO GetAllProdcut(int pageNumber = 0, int pageSize = 0)
+        {
+            try 
+            {
+                var Category = _unitOfWork.Category.Get().ToList();
+                var CatDto= _mapper.Map<List<CategoryDto>>(Category);
+                
+                var result = _unitOfWork.Discount.Get(x => x.IsDelete == false,includeProperties:"", page: pageNumber, Take: pageSize).ToList();
+                if (result != null && result.Count > 0)
+                {
+                    var resultList = _mapper.Map<List<DiscountDto>>(result);
+                    _response.Data = resultList;
+                    _response.Code = 200;
+                    _response.Message = "OK";
+                }
+                else
+                {
+                    _response.Data = null;
+                    _response.Code = 200;
+                    _response.Message = "No Data";
+                }
+            }
+            catch (Exception ex)
+            {
+
+                _response.Data = null;
+                _response.Code = 400;
+                _response.Message = ex.Message;
+            }
+            return _response;
+        }
     }
 }

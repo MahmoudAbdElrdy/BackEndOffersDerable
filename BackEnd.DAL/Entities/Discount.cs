@@ -10,9 +10,10 @@ namespace BackEnd.DAL.Entities
         public DiscountType? DiscountType { get; set; }
         public double? DiscountValue { get; set; }
         public double? DiscountRate{ get; set; }
+        public string DiscountDescription { get; set; } 
         public DateTime? SatrtDate { get; set; }
         public DateTime? EndDate{ get; set; }
         public int? ProductId { get; set; }
-        public Product Product { get; set; }
+        public List<Product> Product { get; set; }
     }
 }

@@ -31,6 +31,7 @@ using AutoMapper;
 using BackEnd.Service.MappingProfiles;
 using EmailService;
 using BackEnd.Service.IService;
+using Microsoft.Extensions.FileProviders;
 
 namespace BackEnd.Web
 {
@@ -118,6 +119,7 @@ namespace BackEnd.Web
             services.AddScoped<IEmailSender, EmailSender>();
             services.AddScoped<IemailService, emailService>();
             services.AddScoped<IidentityServices, IdentityServices>();
+            services.AddScoped<IServiceDiscount, DiscountServices>();
             //----------------------------swagger-------------------------------------
             services.AddSwaggerGen(x =>
       {
@@ -186,9 +188,12 @@ namespace BackEnd.Web
         x.TokenValidationParameters = tokenValidationParameters;
       });
       //----------------------------end jwtSettings-------------------------------------
-      services.AddScoped<IidentityServices, IdentityServices>();
+            services.AddScoped<IidentityServices, IdentityServices>();
             services.AddTransient<IBackEndContext, BakEndContext>();
             services.AddTransient(typeof(RoleManager<>), typeof(IdentityRole<>));
+            services.AddScoped<ICategoryServices, CategoryServices>();
+            services.AddScoped<IProdcutServices, ProdcutServices>();
+            services.AddScoped<ICompanyServices, CompanyServices>();
         }
 
 
@@ -217,6 +222,11 @@ namespace BackEnd.Web
       {
         endpoints.MapControllers();
       });
-    }
+            app.UseStaticFiles(new StaticFileOptions
+            {
+                FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "UploadFiles")),
+                RequestPath = "/wwwroot/UploadFiles"
+            });
+        }
   }
 }

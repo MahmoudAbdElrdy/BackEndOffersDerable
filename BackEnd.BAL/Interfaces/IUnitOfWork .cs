@@ -17,5 +17,9 @@ namespace BackEnd.BAL.Interfaces
         Task<int> SaveAsync();
         IGenericRepository<Category> Category { get; }
         IGenericRepository<ApplicationUser> ApplicationUser{ get; }
+        IGenericRepository<Product> Prodcut { get; }
+        IGenericRepository<Company> Company { get; } 
+        IGenericRepository<Discount> Discount { get; }  
+       
     }
 }

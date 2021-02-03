@@ -11,11 +11,11 @@ using System.Threading.Tasks;
 
 namespace BackEnd.Service.Service
 {
-   public class CategoryServices : BaseServices, ICategoryServices
+   public class ProdcutServices : BaseServices, IProdcutServices
     {
 
-        #region ServicesCategory(IUnitOfWork unitOfWork, IResponseDTO responseDTO, IMapper mapper)
-        public CategoryServices(IUnitOfWork unitOfWork, IResponseDTO responseDTO, IMapper mapper)
+        #region ServicesProdcut(IUnitOfWork unitOfWork, IResponseDTO responseDTO, IMapper mapper)
+        public ProdcutServices(IUnitOfWork unitOfWork, IResponseDTO responseDTO, IMapper mapper)
             : base(unitOfWork, responseDTO, mapper)
         {
 
@@ -28,10 +28,10 @@ namespace BackEnd.Service.Service
         {
             try
             {
-                var result = _unitOfWork.Category.Get(x => x.IsDelete == false, page: pageNumber, Take: pageSize).ToList();
+                var result = _unitOfWork.Prodcut.Get(x => x.IsDelete == false,includeProperties: "ProductImages", page: pageNumber, Take: pageSize).ToList();
                 if (result != null && result.Count > 0)
                 {
-                    var resultList = _mapper.Map<List<CategoryDto>>(result);
+                    var resultList = _mapper.Map<List<ShowProductDto>>(result);
                     _response.Data = resultList;
                     _response.Code = 200;
                     _response.Message = "OK";
@@ -55,13 +55,13 @@ namespace BackEnd.Service.Service
         #endregion
 
  
-        #region Remove(CategoryDto model)
-        public IResponseDTO Remove(CategoryDto model)
+        #region Remove(ProdcutDto model)
+        public IResponseDTO Remove(ProductDto model)
         {
             try
             {
-                var DBmodel = _mapper.Map<Category>(model);
-                _unitOfWork.Category.Delete(DBmodel);
+                var DBmodel = _mapper.Map<Product>(model);
+                _unitOfWork.Prodcut.Delete(DBmodel);
                 var save = _unitOfWork.Save();
                 if (save == "200")
                 {
@@ -93,11 +93,11 @@ namespace BackEnd.Service.Service
         {
             try
             {
-                var DBmodel = _unitOfWork.Category.Get(x => x.Id == id && x.IsDelete == false).FirstOrDefault();
+                var DBmodel = _unitOfWork.Prodcut.Get(x => x.Id == id && x.IsDelete == false).FirstOrDefault();
                 if (DBmodel != null)
                 {
-                    var CategoryDto = _mapper.Map<CategoryDto>(DBmodel);
-                    _response.Data = CategoryDto;
+                    var ProdcutDto = _mapper.Map<ProductDto>(DBmodel);
+                    _response.Data = ProdcutDto;
                     _response.Code = 200;
                     _response.Message = "OK";
                 }
@@ -119,22 +119,22 @@ namespace BackEnd.Service.Service
         }
         #endregion
 
-        #region InsertAsync(CategoryDto model)
-        public  IResponseDTO Insert(CategoryDto model)
+        #region InsertAsync(ProdcutDto model)
+        public  IResponseDTO Insert(ProductDto model)
         {
             try
             {
-                var Dto = _mapper.Map<Category>(model);
+                var Dto = _mapper.Map<Product>(model);
               //  Dto.CreationDate = DateTime.Now;
 
-                var DBmodel =  _unitOfWork.Category.Insert(Dto);
+                var DBmodel =  _unitOfWork.Prodcut.Insert(Dto);
 
                 var save =  _unitOfWork.Save();
 
                 if (save == "200")
                 {
-                    var CategoryDto = _mapper.Map<CategoryDto>(Dto);
-                    _response.Data = CategoryDto;
+                    var ProdcutDto = _mapper.Map<ProductDto>(Dto);
+                    _response.Data = ProdcutDto;
                     _response.Code = 200;
                     _response.Message = "OK";
                 }
@@ -157,15 +157,15 @@ namespace BackEnd.Service.Service
         }
         #endregion
 
-        #region Update(CategoryDto model)
-        public IResponseDTO Update(CategoryDto model)
+        #region Update(ProdcutDto model)
+        public IResponseDTO Update(ProductDto model)
         {
             try
             {
                 
-                var DbCategory = _mapper.Map<Category>(model);
-                DbCategory.LastEditDate = DateTime.UtcNow.AddHours(2);
-                _unitOfWork.Category.Update(DbCategory);
+                var DbProdcut = _mapper.Map<Product>(model);
+                DbProdcut.LastEditDate = DateTime.UtcNow.AddHours(2);
+                _unitOfWork.Prodcut.Update(DbProdcut);
                 var save = _unitOfWork.Save();
 
                 if (save == "200")
@@ -193,16 +193,16 @@ namespace BackEnd.Service.Service
         }
         #endregion
 
-        #region Delete(CategoryDto model)
+        #region Delete(ProdcutDto model)
         public IResponseDTO Delete(int id)
         {
             try
             {
                
-                var DbCategory = _unitOfWork.Category.GetByID(id);
-                DbCategory.IsDelete = true;
-                DbCategory.LastEditDate = DateTime.UtcNow.AddHours(2);
-                _unitOfWork.Category.Delete(DbCategory);
+                var DbProdcut = _unitOfWork.Prodcut.GetByID(id);
+                DbProdcut.IsDelete = true;
+                DbProdcut.LastEditDate = DateTime.UtcNow.AddHours(2);
+                _unitOfWork.Prodcut.Delete(DbProdcut);
                 var save = _unitOfWork.Save();
 
                 if (save == "200")
@@ -232,7 +232,7 @@ namespace BackEnd.Service.Service
        
 
        
-        public IResponseDTO GetAvailableCategoryWithSupCategory()
+        public IResponseDTO GetAvailableProdcutWithSupProdcut()
         {
             throw new NotImplementedException();
         }

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Dynamic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
@@ -273,6 +274,35 @@ namespace BackEnd.Service.Service
            
 
         
+        }
+        public async Task<IResponseDTO> GetAllCompanyAsync()
+        { 
+            try
+            {
+                var users = await _userManager.GetUsersInRoleAsync("Company");
+
+
+                var usersDto = new List<ExpandoObject>();
+                foreach (var Model in users)
+                {
+                    dynamic User = new ExpandoObject();
+                    User.Id = Model.Id;
+                    User.UserName = Model.UserName;
+                    User.FullName = Model.FullName;
+                    usersDto.Add(User);
+                }
+
+                _response.Data = usersDto;
+                _response.Code = 200;
+                _response.Message = "OK";
+            }
+            catch (Exception ex)
+            {
+                _response.Data = null;
+                _response.Code = 200;
+                _response.Message = ex.Message;
+            }
+            return _response;
         }
     }
 }
