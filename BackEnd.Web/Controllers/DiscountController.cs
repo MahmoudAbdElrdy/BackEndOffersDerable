@@ -36,9 +36,9 @@ namespace BackEnd.Web.Controllers
         #endregion
         #region Get : api/Discount/GetAll
         [HttpGet("GetAllProdcut")]
-        public IResponseDTO GetAllProdcut(int pageNumber = 0, int pageSize = 0)
+        public IResponseDTO GetAllProdcut(int pageNumber = 0, int pageSize = 0, int CategoryId = 0)
         {
-            var result = ServicesDiscount.GetAllProdcut(pageNumber, pageSize);
+            var result = ServicesDiscount.GetAllProdcut(pageNumber, pageSize, CategoryId);
             return result;
         }
         #endregion
@@ -50,7 +50,14 @@ namespace BackEnd.Web.Controllers
             return result;
         }
         #endregion
-
+        #region Get : api/Discount/GetById
+        [HttpGet("GetProdcutById")]
+        public IResponseDTO GetProdcutById(int id)
+        {
+            var result = ServicesDiscount.GetProdcutById(id);
+            return result;
+        }
+        #endregion
         #region Put : api/Discount/Update
         [HttpPut("Update")]
         public IResponseDTO Update([FromBody]DiscountDto model)

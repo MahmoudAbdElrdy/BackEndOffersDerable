@@ -19,18 +19,19 @@ namespace BackEnd.Service.DTO.Prodcuts
     public class ShowDiscountDto 
     {
         public int Id { get; set; }
-        public int? DiscountType { get; set; }
-        public double? DiscountValue { get; set; }
         public double? DiscountRate { get; set; }
         public string DiscountDescription { get; set; }
-        public DateTime? SatrtDate { get; set; }
-        public DateTime? EndDate { get; set; }
+        public double? NumberDays { get; set; }
         public string ProductName { get; set; }
-        public int ProdcutId { get; set; }
-        public string ProdcutDescription{ get; set; }
-        public string ProdcutImage{ get; set; } 
-        public double? ProdcutPrice{ get; set; }
-        public double? ProdcutNewPrice{ get; set; } 
+        public int ProductId { get; set; }
+        public string ProductDescription{ get; set; } 
+        public double? NewPrice { get; set; }
+        public double? OldPrice { get; set; }
+        public int? CompanyId { get; set; }
+        public string CompanyName { get; set; }
+        public string CompanyLogo { get; set; } 
+        public string CompanyPhoneNumber { get; set; } 
+        public List<string> ProductImages { get; set; }
         // public List<CategoryDto> Categories { get; set; }
     }
 }

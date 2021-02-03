@@ -242,14 +242,18 @@ namespace BackEnd.Service.Service
 
         #endregion
 
-        public IResponseDTO GetAllProdcut(int pageNumber = 0, int pageSize = 0)
+        public IResponseDTO GetAllProdcut(int pageNumber = 0, int pageSize = 0, int CategoryId = 0)
         {
             try 
             {
-                //var Category = _unitOfWork.Category.Get().ToList();
-                //var CatDto= _mapper.Map<List<CategoryDto>>(Category);
-                
-                var result = _unitOfWork.Discount.Get(x => x.IsDelete == false,includeProperties: "Product.ProductImages", page: pageNumber, Take: pageSize).ToList();
+               
+                var result = _unitOfWork.Discount.Get(filter:
+                    x => (CategoryId !=0? 
+                    x.Product.CategoryId == (int?)CategoryId : true)
+                    && x.IsDelete == false
+                ,
+                    includeProperties: "Product.ProductImages,Product.Category", 
+                    page: pageNumber, Take: pageSize).ToList();
                 if (result != null && result.Count > 0)
                 {
                     var resultList = _mapper.Map<List<ShowListProductDto>>(result);
@@ -263,6 +267,35 @@ namespace BackEnd.Service.Service
                     _response.Data = null;
                     _response.Code = 200;
                     _response.Message = "No Data";
+                }
+            }
+            catch (Exception ex)
+            {
+
+                _response.Data = null;
+                _response.Code = 400;
+                _response.Message = ex.Message;
+            }
+            return _response;
+        }
+
+        public IResponseDTO GetProdcutById(int? id) 
+        {
+            try
+            {
+                var DBmodel = _unitOfWork.Discount.Get(x => x.Id == id && x.IsDelete == false, includeProperties: "Product.ProductImages,Product.Category,Product.Company.User").FirstOrDefault();
+                if (DBmodel != null)
+                {
+                    var DiscountDto = _mapper.Map<ShowDiscountDto>(DBmodel);
+                    _response.Data = DiscountDto;
+                    _response.Code = 200;
+                    _response.Message = "OK";
+                }
+                else
+                {
+                    _response.Data = null;
+                    _response.Code = 200;
+                    _response.Message = "Not Data";
                 }
             }
             catch (Exception ex)
