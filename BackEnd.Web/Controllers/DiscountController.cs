@@ -28,62 +28,62 @@ namespace BackEnd.Web.Controllers
 
         #region Get : api/Discount/GetAll
         [HttpGet("GetPage")]
-        public IResponseDTO GetPage(int pageNumber = 0, int pageSize =0)
+        public ActionResult<IResponseDTO> GetPage(int pageNumber = 0, int pageSize =0)
         {
             var result = ServicesDiscount.GetAll(pageNumber, pageSize);
-            return result;
+             if (result.Code == 404) {  return NotFound(result);}  return Ok(result);
         }
         #endregion
         #region Get : api/Discount/GetAll
         [HttpGet("GetAllProdcut")]
-        public IResponseDTO GetAllProdcut(int pageNumber = 0, int pageSize = 0, int CategoryId = 0)
+        public ActionResult<IResponseDTO> GetAllProdcut(int pageNumber = 0, int pageSize = 0, int CategoryId = 0)
         {
             var result = ServicesDiscount.GetAllProdcut(pageNumber, pageSize, CategoryId);
-            return result;
+             if (result.Code == 404) {  return NotFound(result);}  return Ok(result);
         }
         #endregion
         #region Get : api/Discount/GetById
         [HttpGet("GetById")]
-        public IResponseDTO GetById(int id)
+        public ActionResult<IResponseDTO> GetById(int id)
         {
             var result = ServicesDiscount.GetByIdAsync(id);
-            return result;
+             if (result.Code == 404) {  return NotFound(result);}  return Ok(result);
         }
         #endregion
         #region Get : api/Discount/GetById
         [HttpGet("GetProdcutById")]
-        public IResponseDTO GetProdcutById(int id)
+        public ActionResult<IResponseDTO> GetProdcutById(int id)
         {
             var result = ServicesDiscount.GetProdcutById(id);
-            return result;
+             if (result.Code == 404) {  return NotFound(result);}  return Ok(result);
         }
         #endregion
         #region Put : api/Discount/Update
         [HttpPut("Update")]
-        public IResponseDTO Update([FromBody]DiscountDto model)
+        public ActionResult<IResponseDTO> Update([FromBody]DiscountDto model)
         {
 
             var result = ServicesDiscount.Update(model);
-            return result;
+             if (result.Code == 404) {  return NotFound(result);}  return Ok(result);
         }
         #endregion
 
         #region Delete : api/Discount/Delete
         [HttpDelete("Delete")]
-        public IResponseDTO Delete(int id)
+        public ActionResult<IResponseDTO> Delete(int id)
         {
             var result = ServicesDiscount.Delete(id);
-            return result;
+             if (result.Code == 404) {  return NotFound(result);}  return Ok(result);
         }
         #endregion
 
        
         #region Post : api/Discount/SaveNew
         [HttpPost("SaveNew")]
-        public IResponseDTO SaveNew([FromBody] DiscountDto model)
+        public ActionResult<IResponseDTO> SaveNew([FromBody] DiscountDto model)
         {
             var result =  ServicesDiscount.Insert(model);
-            return result;
+             if (result.Code == 404) {  return NotFound(result);}  return Ok(result);
         }
         #endregion
     }

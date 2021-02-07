@@ -27,48 +27,69 @@ namespace BackEnd.Web.Controllers
 
         #region Get : api/Category/GetAll
         [HttpGet("GetPage")]
-        public IResponseDTO GetPage(int pageNumber = 0, int pageSize =0)
+        public ActionResult<IResponseDTO> GetPage(int pageNumber = 0, int pageSize =0)
         {
             var result = ServicesCategory.GetAll(pageNumber, pageSize);
-            return result;
+            if (result.Code == 404)
+            {
+                return NotFound(result);
+            }
+            return Ok(result);
+          
         }
         #endregion
       
         #region Get : api/Category/GetById
         [HttpGet("GetById")]
-        public IResponseDTO GetById(int id)
+        public ActionResult<IResponseDTO> GetById(int id)
         {
             var result = ServicesCategory.GetByIdAsync(id);
-            return result;
+            if (result.Code == 404)
+            {
+                return NotFound(result);
+            }
+            return Ok(result);
         }
         #endregion
 
         #region Put : api/Category/Update
         [HttpPut("Update")]
-        public IResponseDTO Update([FromBody]CategoryDto model)
+        public ActionResult<IResponseDTO> Update([FromBody]CategoryDto model)
         {
 
             var result = ServicesCategory.Update(model);
-            return result;
+            if (result.Code == 404)
+            {
+                return NotFound(result);
+            }
+            return Ok(result);
         }
         #endregion
 
         #region Delete : api/Category/Delete
         [HttpDelete("Delete")]
-        public IResponseDTO Delete(int id)
+        public ActionResult<IResponseDTO> Delete(int id)
         {
             var result = ServicesCategory.Delete(id);
-            return result;
+            if (result.Code == 404)
+            {
+                return NotFound(result);
+            }
+            return Ok(result);
         }
         #endregion
 
        
         #region Post : api/Category/SaveNew
         [HttpPost("SaveNew")]
-        public IResponseDTO SaveNew([FromBody] CategoryDto model)
+        public ActionResult<IResponseDTO> SaveNew([FromBody] CategoryDto model)
         {
             var result =  ServicesCategory.Insert(model);
-            return result;
+            if (result.Code == 404)
+            {
+                return NotFound(result);
+            }
+            return Ok(result);
         }
         #endregion
     }

@@ -48,7 +48,7 @@ namespace BackEnd.Service.Service
 
         }
 
-        public async Task<AuthenticationResult> LoginAsync(string Email, string Password)
+        public async Task<IResponseDTO> LoginAsync(string Email, string Password)
         {
             var user = await _userManager.FindByEmailAsync(Email);
             if (user == null)
@@ -56,7 +56,7 @@ namespace BackEnd.Service.Service
               //  user = await _userManager.FindByNameAsync(Email);
             if (user == null)
             {
-                return new AuthenticationResult
+                return new ResponseDTO
                 {
                     Message = "User does not Exist"
                 };
@@ -66,14 +66,14 @@ namespace BackEnd.Service.Service
             var userHasValidPassword = await _userManager.CheckPasswordAsync(user, Password);
             if (!userHasValidPassword)
             {
-                return new AuthenticationResult
+                return new ResponseDTO
                 {
                     Message = "Password  wrong"
                 };
             }
             if (user.confirmed == null || user.confirmed == false)
             {
-                return new AuthenticationResult
+                return new ResponseDTO
                 {
                     Message = "User Must Send Verfication Code"
                 };
@@ -116,7 +116,7 @@ namespace BackEnd.Service.Service
                 return new ResponseDTO
                 {
                     Data = null,
-                    Code = 400,
+                    Code = 404,
                     Message = "User with this email adress already Exist"
                 };
             }
@@ -146,7 +146,7 @@ namespace BackEnd.Service.Service
                     return new ResponseDTO
                     {
                         Data = null,
-                        Code = 400,
+                        Code = 404,
                         Message = createdUser.Errors.Select(x => x.Description).FirstOrDefault()
                     };
 
@@ -160,7 +160,7 @@ namespace BackEnd.Service.Service
             //    return new ResponseDTO
             //    {
             //        Data = null,
-            //        Code = 400,
+            //        Code = 404,
             //        Message = createdUser.Errors.Select(x => "email not send").FirstOrDefault(),
             //    };
 
@@ -182,7 +182,7 @@ namespace BackEnd.Service.Service
         }
 
         //return await GenerateAutheticationForResultForUser(newUser);
-        private async Task<AuthenticationResult> GenerateAutheticationForResultForUser(ApplicationUser user)
+        private async Task<ResponseDTO> GenerateAutheticationForResultForUser(ApplicationUser user)
         {
             var TokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes(_jwtSettings.JWT_Secret);
@@ -220,10 +220,11 @@ namespace BackEnd.Service.Service
             };
             var token = TokenHandler.CreateToken(TokenDescriptor);
             await _dataContext.SaveChangesAsync();
-            return new AuthenticationResult
+
+            return new ResponseDTO
             {
-                Success = true,
-                Token = TokenHandler.WriteToken(token)
+                Code=200,
+                Data = TokenHandler.WriteToken(token)
 
             };
         }
@@ -232,9 +233,7 @@ namespace BackEnd.Service.Service
             int num = _random.Next();
             return await _emailService.sendVerfication(num, Email);
         }
-        
-
-        public async Task<Result> verfayUser(UserVerfayRequest request)
+         public async Task<Result> verfayUser(UserVerfayRequest request)
         {
             var user = await _userManager.FindByEmailAsync(request.Email);
             if (user.verficationCode == request.verficationCode)
@@ -245,11 +244,10 @@ namespace BackEnd.Service.Service
             }
             else
             {
-                return new Result { success = false, data = user, code = 400, message = "Falied" };
+                return new Result { success = false, data = user, code = 404, message = "Falied" };
             }
 
         }
-
         public IResponseDTO GetRoles()
         {
             var Roles = _dataContext.Roles;
@@ -304,5 +302,213 @@ namespace BackEnd.Service.Service
             }
             return _response;
         }
+        public IResponseDTO checkPhone(string PhoneNumber)
+        {
+            try
+            {
+                var Check = _unitOfWork.ApplicationUser.GetEntity(x => x.PhoneNumber == PhoneNumber);
+                if (Check != null)
+                {
+                    _response.Data = Check;
+                    _response.Code = 200;
+                    _response.Message = "OK";
+                }
+                else
+                {
+                    _response.Data = null;
+
+                    _response.Code = 200;
+                    _response.Message = PhoneNumber + ":Not Found";
+                }
+
+            }
+            catch (Exception ex)
+            {
+                _response.Data = null;
+
+                _response.Code = 400;
+                _response.Message = ex.Message;
+            }
+            return _response;
+        }
+        public IResponseDTO verifyAccount(string PhoneNumber)
+        {
+            try
+            {
+                var Check = _unitOfWork.ApplicationUser.GetEntity(x => x.PhoneNumber == PhoneNumber);
+                if (Check != null)
+                {
+                    Check.confirmedMobile = true;
+                    _unitOfWork.ApplicationUser.Update(Check);
+                    var Save = _unitOfWork.Save();
+                    _response.Data = Check;
+                    _response.Code = 200;
+                    _response.Message = "OK";
+                }
+                else
+                {
+                    _response.Data = null;
+
+                    _response.Code = 200;
+                    _response.Message = PhoneNumber + ":Not Found";
+                }
+
+            }
+            catch (Exception ex)
+            {
+                _response.Data = null;
+
+                _response.Code = 400;
+                _response.Message = ex.Message;
+            }
+            return _response;
+        }
+
+        public IResponseDTO RestPasswordByPhone(ResetPasswordMobile resetpasswordVm)
+        {
+            var passwordHasher = new PasswordHasher<ApplicationUser>();
+            var user = _unitOfWork.ApplicationUser.GetEntity(x => x.PhoneNumber == resetpasswordVm.PhoneNmber);
+            if (!string.IsNullOrEmpty(resetpasswordVm.Password))
+                user.PasswordHash = passwordHasher.HashPassword(user, resetpasswordVm.Password);
+            _unitOfWork.ApplicationUser.Update(user);
+            var Save = _unitOfWork.Save();
+            if (Save == "200")
+            {
+                return new ResponseDTO
+                {
+
+                    Code = 200,
+                    Message = "reset password success",
+                    Data = user.PhoneNumber
+                };
+            }
+            else
+            {
+                return new ResponseDTO
+                {
+
+                    Code = 403,
+                    Message = "reset password faild",
+                    Data = user.PhoneNumber
+                };
+            }
+        }
+
+        public IResponseDTO GetProfile(string ApplicationUserId)
+        {
+            try
+            {
+                var user = _unitOfWork.Company.Get(x => x.ApplicationUserId == ApplicationUserId, includeProperties: "ApplicationUser").FirstOrDefault();
+                dynamic UserProfile = new ExpandoObject();
+                if (user != null)
+                {
+                    UserProfile.Id = user.Id;
+                    UserProfile.ApplicationUserId = user.ApplicationUserId;
+                    UserProfile.Latitude = user.Latitude;
+                    UserProfile.Longitude = user.Longitude;
+                    UserProfile.Email = user.User?.Email;
+                    UserProfile.FullName = user.User?.FullName;
+                    UserProfile.UserName = user.User?.UserName;
+                    UserProfile.PhoneNumber = user.User?.PhoneNumber;
+                    UserProfile.PhoneNumberConfirmed = user.User?.PhoneNumberConfirmed;
+                    UserProfile.EmailConfirmed = user.User?.EmailConfirmed;
+
+                }
+                if (user == null)
+                {
+                    var user2 = _unitOfWork.ApplicationUser.GetEntity(x => x.Id == ApplicationUserId);
+                    UserProfile.Id = null;
+
+                    UserProfile.ApplicationuserId = null;
+                  
+                    UserProfile.Latitude = null;
+                    UserProfile.Longitude = null;
+                    UserProfile.Email = user2?.Email;
+                    UserProfile.FullName = user2?.FullName;
+                    UserProfile.userName = user2?.UserName;
+                    UserProfile.PhoneNumber = user2?.PhoneNumber;
+                    UserProfile.PhoneNumberConfirmed = user2?.PhoneNumberConfirmed;
+                    UserProfile.EmailConfirmed = user2?.EmailConfirmed;
+
+                }
+                _response.Code = 200;
+                _response.Data = UserProfile;
+                _response.Message = "OK";
+                // UserProfile.Id = user.Id;
+            }
+            catch (Exception ex)
+            {
+                _response.Code = 200;
+                _response.Data = null;
+                _response.Data = ex.Message;
+
+            }
+
+            return _response;
+        }
+        public async Task<IResponseDTO> updateresetPasswordCode(int num, string Email)
+        {
+            var User = await _userManager.FindByEmailAsync(Email);
+            User.resetPasswordCode = num;
+            await _userManager.UpdateAsync(User);
+            return new ResponseDTO
+            {
+                Code = 200,
+                Message = "code sent successfuly",
+
+                Data = null
+            };
+        }
+
+        public async Task<Boolean> sendCodeResetPasswordToEMail(int restCode, string Email)
+        {
+            return await _emailService.sendResetPasswordCode(restCode, Email);
+        }
+
+
+        public async Task<IResponseDTO> resetPasswordVerfayCode(UserVerfayResetPasswordCode request)
+        {
+            var user = await _userManager.FindByEmailAsync(request.Email);
+            if (user.resetPasswordCode == request.resetCode)
+            {
+                return new ResponseDTO { Data = null, Code = 200, Message = "confirmed scuccess" };
+            }
+            else
+            {
+                return new ResponseDTO { Code = 403, Message = "confirmed faild", Data = null };
+            }
+
+        }
+
+        public async Task<IResponseDTO> ResetPassword(ResetPasswordVm resetpasswordVm)
+        {
+            var passwordHasher = new PasswordHasher<ApplicationUser>();
+            var user = await _userManager.FindByEmailAsync(resetpasswordVm.Email);
+            if (!string.IsNullOrEmpty(resetpasswordVm.Password))
+                user.PasswordHash = passwordHasher.HashPassword(user, resetpasswordVm.Password);
+            IdentityResult result = await _userManager.UpdateAsync(user);
+            if (result.Succeeded)
+            {
+                return new ResponseDTO
+                {
+
+                    Code = 200,
+                    Message = "reset password success",
+                    Data = result
+                };
+            }
+            else
+            {
+                return new ResponseDTO
+                {
+
+                    Code = 403,
+                    Message = "reset password faild",
+                    Data = result
+                };
+            }
+        }
+
+
     }
 }

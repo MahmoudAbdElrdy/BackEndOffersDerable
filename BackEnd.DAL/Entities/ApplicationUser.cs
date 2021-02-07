@@ -9,9 +9,11 @@ namespace BackEnd.DAL.Entities
 {
     public class ApplicationUser : IdentityUser
     {
-        public string FullName { get; set; }
         public int verficationCode { get; set; }
         public bool? confirmed { get; set; }
+        public bool? confirmedMobile { get; set; }
+        public string FullName { get; set; }
+        public int? resetPasswordCode { get; set; }
         public string Image { get; set; }
         [ForeignKey("tblCountries")]
         public int? tblCountriesId { get; set; }

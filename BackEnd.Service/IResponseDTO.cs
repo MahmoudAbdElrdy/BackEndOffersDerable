@@ -26,7 +26,7 @@ namespace BackEnd.Service
     
 
         public string Message { get; set; } = "";
-        public int Code { get; set; } = 400;
+        public int Code { get; set; } = 404;
 
         public dynamic Data { get; set; }
 

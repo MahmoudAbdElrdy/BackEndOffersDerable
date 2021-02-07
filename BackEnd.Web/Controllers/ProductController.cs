@@ -28,48 +28,48 @@ namespace BackEnd.Web.Controllers
 
         #region Get : api/Product/GetAll
         [HttpGet("GetPage")]
-        public IResponseDTO GetPage(int pageNumber = 0, int pageSize =0)
+        public ActionResult<IResponseDTO> GetPage(int pageNumber = 0, int pageSize =0)
         {
             var result = ServicesProduct.GetAll(pageNumber, pageSize);
-            return result;
+           if (result.Code == 404) {  return NotFound(result);}  return Ok(result);
         }
         #endregion
       
         #region Get : api/Product/GetById
         [HttpGet("GetById")]
-        public IResponseDTO GetById(int id)
+        public ActionResult<IResponseDTO> GetById(int id)
         {
             var result = ServicesProduct.GetByIdAsync(id);
-            return result;
+           if (result.Code == 404) {  return NotFound(result);}  return Ok(result);
         }
         #endregion
 
         #region Put : api/Product/Update
         [HttpPut("Update")]
-        public IResponseDTO Update([FromBody]ProductDto model)
+        public ActionResult<IResponseDTO> Update([FromBody]ProductDto model)
         {
 
             var result = ServicesProduct.Update(model);
-            return result;
+           if (result.Code == 404) {  return NotFound(result);}  return Ok(result);
         }
         #endregion
 
         #region Delete : api/Product/Delete
         [HttpDelete("Delete")]
-        public IResponseDTO Delete(int id)
+        public ActionResult<IResponseDTO> Delete(int id)
         {
             var result = ServicesProduct.Delete(id);
-            return result;
+           if (result.Code == 404) {  return NotFound(result);}  return Ok(result);
         }
         #endregion
 
        
         #region Post : api/Product/SaveNew
         [HttpPost("SaveNew")]
-        public IResponseDTO SaveNew([FromBody] ProductDto model)
+        public ActionResult<IResponseDTO> SaveNew([FromBody] ProductDto model)
         {
             var result =  ServicesProduct.Insert(model);
-            return result;
+           if (result.Code == 404) {  return NotFound(result);}  return Ok(result);
         }
         #endregion
     }

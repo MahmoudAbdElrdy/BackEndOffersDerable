@@ -63,7 +63,7 @@ namespace BackEnd.Service.Service
                 return new ResponseDTO
                 {
                     Data = null,
-                    Code = 400,
+                    Code = 404,
                     Message = ex.Message
                 };
             }
