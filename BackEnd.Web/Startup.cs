@@ -120,6 +120,7 @@ namespace BackEnd.Web
             services.AddScoped<IemailService, emailService>();
             services.AddScoped<IidentityServices, IdentityServices>();
             services.AddScoped<IServiceDiscount, DiscountServices>();
+            services.AddScoped<IRatingServices, RatingServices>();
             //----------------------------swagger-------------------------------------
             services.AddSwaggerGen(x =>
       {

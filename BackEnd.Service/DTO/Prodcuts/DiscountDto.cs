@@ -23,15 +23,17 @@ namespace BackEnd.Service.DTO.Prodcuts
         public string DiscountDescription { get; set; }
         public double? NumberDays { get; set; }
         public string ProductName { get; set; }
-        public int ProductId { get; set; }
+        public int? ProductId { get; set; }
         public string ProductDescription{ get; set; } 
         public double? NewPrice { get; set; }
         public double? OldPrice { get; set; }
         public int? CompanyId { get; set; }
         public string CompanyName { get; set; }
+       
         public string CompanyLogo { get; set; } 
         public string CompanyPhoneNumber { get; set; } 
         public List<string> ProductImages { get; set; }
+        public string CompanyDescription { get; set; }
         // public List<CategoryDto> Categories { get; set; }
     }
 }

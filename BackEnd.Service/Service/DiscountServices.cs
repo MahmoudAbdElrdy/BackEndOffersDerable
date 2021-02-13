@@ -307,5 +307,33 @@ namespace BackEnd.Service.Service
             }
             return _response;
         }
+        public IResponseDTO GetDiscountByProduct(int? ProductId)
+        {
+            try
+            {
+                var DBmodel = _unitOfWork.Discount.Get(x => x.ProductId == ProductId && x.IsDelete == false).FirstOrDefault();
+                if (DBmodel != null)
+                {
+                    var DiscountDto = _mapper.Map<DiscountDto>(DBmodel);
+                    _response.Data = DiscountDto;
+                    _response.Code = 200;
+                    _response.Message = "OK";
+                }
+                else
+                {
+                    _response.Data = null;
+                    _response.Code = 200;
+                    _response.Message = "Not Data";
+                }
+            }
+            catch (Exception ex)
+            {
+
+                _response.Data = null;
+                _response.Code = 404;
+                _response.Message = ex.Message;
+            }
+            return _response;
+        }
     }
 }

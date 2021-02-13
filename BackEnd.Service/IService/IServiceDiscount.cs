@@ -15,5 +15,6 @@ namespace BackEnd.Service.IService
         IResponseDTO Update(DiscountDto entity);
         IResponseDTO Remove(DiscountDto entity);
         IResponseDTO GetProdcutById(int? id);
+        IResponseDTO GetDiscountByProduct(int? ProductId);
     }
 }

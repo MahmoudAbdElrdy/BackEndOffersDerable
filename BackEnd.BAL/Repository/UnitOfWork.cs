@@ -110,7 +110,9 @@ namespace BackEnd.BAL.Repository
         public IGenericRepository<ApplicationUser> ApplicationUser { get { return new GenericRepository<ApplicationUser>(Context); } }
 
         public IGenericRepository<Product> Prodcut { get { return new GenericRepository<Product>(Context); } }
+        public IGenericRepository<ProductImages> ProductImages { get { return new GenericRepository<ProductImages>(Context); } }
         public IGenericRepository<Company> Company { get { return new GenericRepository<Company>(Context); } }
         public IGenericRepository<Discount> Discount { get { return new GenericRepository<Discount>(Context); } }
+        public IGenericRepository<Rating> Rating { get { return new GenericRepository<Rating>(Context); } }
     }
 }

@@ -53,7 +53,9 @@ namespace BackEnd.Service.Service
             var user = await _userManager.FindByEmailAsync(Email);
             if (user == null)
                 user = _unitOfWork.ApplicationUser.GetEntity(x=>x.PhoneNumber==Email);
-              //  user = await _userManager.FindByNameAsync(Email);
+            if (user == null)
+                user = _unitOfWork.ApplicationUser.GetEntity(x => x.UserName == Email);
+            //  user = await _userManager.FindByNameAsync(Email);
             if (user == null)
             {
                 return new ResponseDTO
@@ -137,7 +139,7 @@ namespace BackEnd.Service.Service
             //-----------------------------add Role to token------------------
          
            
-            if (!string.IsNullOrEmpty(Role))
+            if (!string.IsNullOrEmpty(Role)&&(Role== "Admin"||Role== "Client"||Role== "Company"))
             {
                 var createdUser = await _userManager.CreateAsync(newUser, Password);
                 UserId = newUser.Id;
@@ -152,6 +154,21 @@ namespace BackEnd.Service.Service
 
                 }
                 await _userManager.AddToRoleAsync(newUser,Role);
+                return new ResponseDTO
+                {
+                    Data = UserId,
+                    Code = 200,
+                    Message = "OK"
+                };
+            }
+            else
+            {
+                return new ResponseDTO
+                {
+                    Data = UserId,
+                    Code = 404,
+                    Message = "Role Not Found"
+                };
             }
             //-----------------------------------------------------------------
             //var res = await sendVerficationToEMail(newUser.Email);
@@ -167,12 +184,7 @@ namespace BackEnd.Service.Service
             //}
             //else
             //{
-            return new ResponseDTO
-            {
-                Data = UserId,
-                Code = 200,
-                Message = "OK"
-            };
+           
 
             // }
 

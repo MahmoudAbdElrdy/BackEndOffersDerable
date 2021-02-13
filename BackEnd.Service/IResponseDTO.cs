@@ -11,6 +11,7 @@ namespace BackEnd.Service
         string Message { get; set; }
         dynamic Data { get; set; }
         int Code { get; set; }
+        int totalRowCount { get; set; }
         #endregion
     }
     public class ResponseDTO : IResponseDTO
@@ -27,6 +28,7 @@ namespace BackEnd.Service
 
         public string Message { get; set; } = "";
         public int Code { get; set; } = 404;
+        public int totalRowCount { get; set; } = 0;
 
         public dynamic Data { get; set; }
 

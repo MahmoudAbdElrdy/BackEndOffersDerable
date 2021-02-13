@@ -4,14 +4,16 @@ using BackEnd.DAL.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace BackEnd.DAL.Migrations
 {
     [DbContext(typeof(BakEndContext))]
-    partial class BakEndContextModelSnapshot : ModelSnapshot
+    [Migration("20210207190232_new")]
+    partial class @new
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -371,14 +373,14 @@ namespace BackEnd.DAL.Migrations
                     b.Property<DateTime?>("CreationDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("DiscountId")
-                        .HasColumnType("int");
-
                     b.Property<bool?>("IsDelete")
                         .HasColumnType("bit");
 
                     b.Property<DateTime?>("LastEditDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<int?>("ProductId")
+                        .HasColumnType("int");
 
                     b.Property<string>("RatingText")
                         .HasColumnType("nvarchar(max)");
@@ -390,7 +392,7 @@ namespace BackEnd.DAL.Migrations
 
                     b.HasIndex("ClientId");
 
-                    b.HasIndex("DiscountId");
+                    b.HasIndex("ProductId");
 
                     b.ToTable("Rating");
                 });
@@ -687,9 +689,9 @@ namespace BackEnd.DAL.Migrations
                         .WithMany()
                         .HasForeignKey("ClientId");
 
-                    b.HasOne("BackEnd.DAL.Entities.Discount", "Product")
+                    b.HasOne("BackEnd.DAL.Entities.Product", "Product")
                         .WithMany()
-                        .HasForeignKey("DiscountId");
+                        .HasForeignKey("ProductId");
                 });
 
             modelBuilder.Entity("BackEnd.DAL.Entities.Review", b =>

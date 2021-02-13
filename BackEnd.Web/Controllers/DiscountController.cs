@@ -57,6 +57,14 @@ namespace BackEnd.Web.Controllers
             var result = ServicesDiscount.GetProdcutById(id);
              if (result.Code == 404) {  return NotFound(result);}  return Ok(result);
         }
+        [HttpGet("GetDiscountByProduct")]
+        public ActionResult<IResponseDTO> GetDiscountByProduct(int id)
+        {
+            var result = ServicesDiscount.GetDiscountByProduct(id);
+             if (result.Code == 404)
+            {  return NotFound(result);} 
+            return Ok(result);
+        }
         #endregion
         #region Put : api/Discount/Update
         [HttpPut("Update")]
@@ -82,8 +90,21 @@ namespace BackEnd.Web.Controllers
         [HttpPost("SaveNew")]
         public ActionResult<IResponseDTO> SaveNew([FromBody] DiscountDto model)
         {
-            var result =  ServicesDiscount.Insert(model);
-             if (result.Code == 404) {  return NotFound(result);}  return Ok(result);
+
+            if (model.Id == 0 )
+            {
+                var result = ServicesDiscount.Insert(model);
+                if (result.Code == 404) { return NotFound(result); }
+                return Ok(result);
+
+            }
+            else
+            {
+                var result = ServicesDiscount.Update(model);
+                if (result.Code == 404) { return NotFound(result); }
+                return Ok(result);
+
+            }
         }
         #endregion
     }

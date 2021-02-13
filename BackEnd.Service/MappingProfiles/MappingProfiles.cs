@@ -45,6 +45,7 @@ namespace BackEnd.Service.MappingProfiles
          .ForMember(x => x.CompanyName, x => x.MapFrom(x => x.Product.Company.User.FullName))
          .ForMember(x => x.CompanyLogo, x => x.MapFrom(x => x.Product.Company.User.Image))
          .ForMember(x => x.CompanyId, x => x.MapFrom(x => x.Product.Company.Id))
+         .ForMember(x => x.CompanyDescription, x => x.MapFrom(x => x.Product.Company.CompanyDescription))
          .ForMember(dest => dest.DiscountDescription, m => m.MapFrom(x => x.DiscountDescription))
          .ForMember(dest => dest.ProductId, m => m.MapFrom(x => x.Product.Id))
          .ForMember(dest => dest.NumberDays, m => m.MapFrom(x => (x.EndDate.Value.Date-x.SatrtDate.Value.Date).TotalDays))
@@ -54,9 +55,11 @@ namespace BackEnd.Service.MappingProfiles
          .ForMember(dest => dest.NewPrice, m => m.MapFrom(x => (int)x.DiscountType == 1 ? x.Product.Price - x.DiscountValue : (x.Product.Price - (x.Product.Price * (x.DiscountValue / 100)))))
          .ForMember(dest => dest.DiscountRate, m => m.MapFrom(x => (int)x.DiscountType == 2 ? 
          x.DiscountRate : (100 * (x.Product.Price - x.DiscountValue) / x.Product.Price)
-         ))
-;
-
+         ));
+            CreateMap<Rating, RatingDto>().ReverseMap();
+            CreateMap<Rating, ShowRatingDto>().
+                ForMember(x => x.ClientId, x => x.MapFrom(x => x.ClientId))
+        .ForMember(x => x.ClientName, x => x.MapFrom(x => x.Client.User.FullName)).ReverseMap();
         }
 
         string getPath()

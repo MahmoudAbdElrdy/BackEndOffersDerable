@@ -18,8 +18,10 @@ namespace BackEnd.BAL.Interfaces
         IGenericRepository<Category> Category { get; }
         IGenericRepository<ApplicationUser> ApplicationUser{ get; }
         IGenericRepository<Product> Prodcut { get; }
+        IGenericRepository<ProductImages> ProductImages { get; }
         IGenericRepository<Company> Company { get; } 
         IGenericRepository<Discount> Discount { get; }  
+        IGenericRepository<Rating> Rating{ get; }  
        
     }
 }

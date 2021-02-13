@@ -11,11 +11,11 @@ using System.Threading.Tasks;
 
 namespace BackEnd.Service.Service
 {
-   public class ProdcutServices : BaseServices, IProdcutServices
+   public class RatingServices : BaseServices, IRatingServices
     {
 
-        #region ServicesProdcut(IUnitOfWork unitOfWork, IResponseDTO responseDTO, IMapper mapper)
-        public ProdcutServices(IUnitOfWork unitOfWork, IResponseDTO responseDTO, IMapper mapper)
+        #region ServicesRating(IUnitOfWork unitOfWork, IResponseDTO responseDTO, IMapper mapper)
+        public RatingServices(IUnitOfWork unitOfWork, IResponseDTO responseDTO, IMapper mapper)
             : base(unitOfWork, responseDTO, mapper)
         {
 
@@ -28,40 +28,75 @@ namespace BackEnd.Service.Service
         {
             try
             {
-                var result = _unitOfWork.Prodcut.Get(x => x.IsDelete == false,includeProperties: "ProductImages,Company.User,Category", page: pageNumber, Take: pageSize).ToList();
+                var result = _unitOfWork.Rating.Get(x => x.IsDelete == false,includeProperties: "Client.User", page: pageNumber, Take: pageSize).ToList();
                 if (result != null && result.Count > 0)
                 {
-                    var resultList = _mapper.Map<List<ShowProductDto>>(result);
+                    var resultList = _mapper.Map<List<ShowRatingDto>>(result);
                     _response.Data = resultList;
                     _response.Code = 200;
                     _response.Message = "OK";
+                    _response.totalRowCount = _unitOfWork.Rating.Get(x => x.IsDelete == false).Count();
                 }
                 else
                 {
                     _response.Data = null;
                     _response.Code = 200;
                     _response.Message = "No Data";
+                    _response.totalRowCount = 0;
                 }
             }
             catch (Exception ex)
             {
              
                 _response.Data = null;
-               _response.Code = 404;
+               _response.Code = 400;
                 _response.Message = ex.Message;
+                _response.totalRowCount = 0;
+            }
+            return _response;
+        }
+
+        public IResponseDTO GetAllRatingByDiscountId(int pageNumber = 0, int pageSize = 0,int DiscountId = 0) 
+        {
+            try
+            {
+                var result = _unitOfWork.Rating.Get(x => x.IsDelete == false&&x.DiscountId== DiscountId, includeProperties: "Client.User", page: pageNumber, Take: pageSize).ToList();
+                if (result != null && result.Count > 0)
+                {
+                    var resultList = _mapper.Map<List<ShowRatingDto>>(result);
+                    _response.Data = resultList;
+                    _response.Code = 200;
+                    _response.Message = "OK";
+                    _response.totalRowCount = _unitOfWork.Rating.Get(x => x.IsDelete == false).Count();
+                }
+                else
+                {
+                    _response.Data = null;
+                    _response.Code = 200;
+                    _response.Message = "No Data";
+                    _response.totalRowCount = 0;
+                }
+            }
+            catch (Exception ex)
+            {
+
+                _response.Data = null;
+                _response.Code = 400;
+                _response.Message = ex.Message;
+                _response.totalRowCount = 0;
             }
             return _response;
         }
         #endregion
 
- 
-        #region Remove(ProdcutDto model)
-        public IResponseDTO Remove(ProductDto model)
+
+        #region Remove(RatingDto model)
+        public IResponseDTO Remove(RatingDto model)
         {
             try
             {
-                var DBmodel = _mapper.Map<Product>(model);
-                _unitOfWork.Prodcut.Delete(DBmodel);
+                var DBmodel = _mapper.Map<Rating>(model);
+                _unitOfWork.Rating.Delete(DBmodel);
                 var save = _unitOfWork.Save();
                 if (save == "200")
                 {
@@ -73,7 +108,7 @@ namespace BackEnd.Service.Service
                 {
                     _response.Data = null;
                     _response.Message = save;
-                   _response.Code = 404;
+                   _response.Code = 400;
                    
                 }
             }
@@ -81,7 +116,7 @@ namespace BackEnd.Service.Service
             {
 
                 _response.Data = null;
-                _response.Code = 404;
+                _response.Code = 400;
                 _response.Message = ex.Message;
             }
             return _response;
@@ -93,11 +128,11 @@ namespace BackEnd.Service.Service
         {
             try
             {
-                var DBmodel = _unitOfWork.Prodcut.Get(x => x.Id == id && x.IsDelete == false, includeProperties: "ProductImages,Company.User,Category").FirstOrDefault();
+                var DBmodel = _unitOfWork.Rating.Get(x => x.Id == id && x.IsDelete == false, includeProperties: "Client.User").FirstOrDefault();
                 if (DBmodel != null)
                 {
-                    var ProdcutDto = _mapper.Map<ProductDto>(DBmodel);
-                    _response.Data = ProdcutDto;
+                    var RatingDto = _mapper.Map<ShowRatingDto>(DBmodel);
+                    _response.Data = RatingDto;
                     _response.Code = 200;
                     _response.Message = "OK";
                 }
@@ -112,29 +147,29 @@ namespace BackEnd.Service.Service
             {
 
                 _response.Data = null;
-                _response.Code = 404;
+                _response.Code = 400;
                 _response.Message = ex.Message;
             }
             return _response;
         }
         #endregion
 
-        #region InsertAsync(ProdcutDto model)
-        public  IResponseDTO Insert(ProductDto model)
+        #region InsertAsync(RatingDto model)
+        public  IResponseDTO Insert(RatingDto model)
         {
             try
             {
-                var Dto = _mapper.Map<Product>(model);
+                var Dto = _mapper.Map<Rating>(model);
               //  Dto.CreationDate = DateTime.Now;
 
-                var DBmodel =  _unitOfWork.Prodcut.Insert(Dto);
+                var DBmodel =  _unitOfWork.Rating.Insert(Dto);
 
                 var save =  _unitOfWork.Save();
 
                 if (save == "200")
                 {
-                    var ProdcutDto = _mapper.Map<ProductDto>(Dto);
-                    _response.Data = ProdcutDto;
+                    var RatingDto = _mapper.Map<RatingDto>(Dto);
+                    _response.Data = RatingDto;
                     _response.Code = 200;
                     _response.Message = "OK";
                 }
@@ -142,7 +177,7 @@ namespace BackEnd.Service.Service
                 {
                     _response.Data = null;
                     _response.Message = save;
-                   _response.Code = 404;
+                   _response.Code = 400;
                  
                 }
             }
@@ -150,30 +185,22 @@ namespace BackEnd.Service.Service
             {
 
                 _response.Data = null;
-                _response.Code = 404;
+                _response.Code = 400;
                 _response.Message = ex.Message;
             }
             return _response;
         }
         #endregion
 
-        #region Update(ProdcutDto model)
-        public IResponseDTO Update(ProductDto model)
+        #region Update(RatingDto model)
+        public IResponseDTO Update(RatingDto model)
         {
             try
             {
-                var Product= _unitOfWork.Prodcut.Get(x => x.Id == model.Id, includeProperties: "ProductImages,Company.User,Category").FirstOrDefault();
-                if (Product.ProductImages.Count >= 1)
-                {
-                    foreach (var Image in Product.ProductImages)
-                    {
-                        _unitOfWork.ProductImages.Delete(Image.Id);
-                    }
-                }
-               
-                var DbProdcut = _mapper.Map(model, Product);
-                DbProdcut.LastEditDate = DateTime.UtcNow.AddHours(2);
-                _unitOfWork.Prodcut.Update(DbProdcut);
+                
+                var DbRating = _mapper.Map<Rating>(model);
+                DbRating.LastEditDate = DateTime.UtcNow.AddHours(2);
+                _unitOfWork.Rating.Update(DbRating);
                 var save = _unitOfWork.Save();
 
                 if (save == "200")
@@ -186,7 +213,7 @@ namespace BackEnd.Service.Service
                 {
                     _response.Data = null;
                 
-                   _response.Code = 404;
+                   _response.Code = 400;
                     _response.Message = save;
                 }
             }
@@ -194,23 +221,23 @@ namespace BackEnd.Service.Service
             {
 
                 _response.Data = null;
-                _response.Code = 404;
+                _response.Code = 400;
                 _response.Message = ex.Message;
             }
             return _response;
         }
         #endregion
 
-        #region Delete(ProdcutDto model)
+        #region Delete(RatingDto model)
         public IResponseDTO Delete(int id)
         {
             try
             {
                
-                var DbProdcut = _unitOfWork.Prodcut.GetByID(id);
-                DbProdcut.IsDelete = true;
-                DbProdcut.LastEditDate = DateTime.UtcNow.AddHours(2);
-                _unitOfWork.Prodcut.Delete(DbProdcut);
+                var DbRating = _unitOfWork.Rating.GetByID(id);
+                DbRating.IsDelete = true;
+                DbRating.LastEditDate = DateTime.UtcNow.AddHours(2);
+                _unitOfWork.Rating.Update(DbRating);
                 var save = _unitOfWork.Save();
 
                 if (save == "200")
@@ -223,7 +250,7 @@ namespace BackEnd.Service.Service
                 {
                     _response.Data = null;
                   
-                   _response.Code = 404;
+                   _response.Code = 400;
                     _response.Message = save;
                 }
             }
@@ -231,7 +258,7 @@ namespace BackEnd.Service.Service
             {
 
                 _response.Data = null;
-                _response.Code = 404;
+                _response.Code = 400;
                 _response.Message = ex.Message;
             }
             return _response;
@@ -240,7 +267,7 @@ namespace BackEnd.Service.Service
        
 
        
-        public IResponseDTO GetAvailableProdcutWithSupProdcut()
+        public IResponseDTO GetAvailableRatingWithSupRating()
         {
             throw new NotImplementedException();
         }

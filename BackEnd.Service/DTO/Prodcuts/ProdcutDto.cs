@@ -6,6 +6,7 @@ namespace BackEnd.Service.DTO.Prodcuts
 {
    public class ProductDto
     {
+        public int Id { get; set; }
         public string ProdcutName { get; set; }
         public string Description { get; set; }
         public double? Price { get; set; }
@@ -15,6 +16,7 @@ namespace BackEnd.Service.DTO.Prodcuts
     }
     public class ShowProductDto
     {
+        public int Id { get; set; }
         public string ProdcutName { get; set; }
         public string Description { get; set; }
         public double? Price { get; set; }
