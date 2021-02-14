@@ -1,4 +1,5 @@
 ﻿
+using BackEnd.Service;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -21,6 +22,32 @@ namespace BackEnd.Web.Controllers
             _env = env;
 
 
+        }
+        [HttpPost("UploadImage")]
+        public IActionResult Upload()
+        {
+            ResponseDTO res;
+            try
+            {
+                var name = Helper.UploadHelper.SaveFile(Request.Form.Files[0], "File");
+                //string path = xx[0];
+                res = new ResponseDTO()
+                {
+                    Code = 200,
+                    Message = "",
+                    Data = name,
+                };
+            }
+            catch (Exception ex)
+            {
+                res = new ResponseDTO()
+                {
+                    Code = 400,
+                    Message = "Error " + ex.Message,
+                    Data = null,
+                };
+            }
+            return Ok(res);
         }
         [HttpPost("FileUpload")]
         public async Task<IActionResult> index(List<IFormFile> files)

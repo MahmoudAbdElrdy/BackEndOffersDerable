@@ -87,6 +87,7 @@ namespace Project.Controllers.V1
             }
             return Ok(res);
         }
+       
 
         [HttpPost("ResetPassword")]
         public async Task<ActionResult<IResponseDTO>> ResetPassword(ResetPasswordVm resetpasswordVm)
@@ -132,12 +133,62 @@ namespace Project.Controllers.V1
         public ActionResult<IResponseDTO> GetProfile(string UserId)
         {
             // string UserId2  = HttpContext.User.Claims.Single(x => x.Type == "id").Value;
-            var res = _identityService.GetProfile(UserId);
+            var res = _identityService.GetProfileClient(UserId);
             if (res.Code == 404)
             {
                 return NotFound(res);
             }
             return Ok(res);
+        }
+        [HttpPost("UpdateUser")]
+        public ActionResult<IResponseDTO> UpdateUser([FromBody] UpdateUser User)
+        {
+            var res = _identityService.UpdateUser(User);
+            if (res.Code == 404)
+            {
+                return NotFound(res);
+            }
+            return Ok(res);
+        }
+        [HttpPost("UploadImage")]
+        public ActionResult<IResponseDTO> Upload(string ApplicationUserId)
+        {
+            IResponseDTO res=new ResponseDTO();
+            try
+            {
+                var name = BackEnd.Web.Helper.UploadHelper.SaveFile(Request.Form.Files[0], "File");
+                //string path = xx[0];
+                if (!string.IsNullOrEmpty(name)&& !string.IsNullOrEmpty(ApplicationUserId))
+                {
+                     res = _identityService.UpdateImage(ApplicationUserId, name);
+                    if (res.Code == 404)
+                    {
+                        return NotFound(res);
+                    }
+                    return Ok(res);
+                }
+                else
+                {
+                    res = new ResponseDTO()
+                    {
+                        Code = 404,
+                        Message = "Empty Image" ,
+                        Data = null,
+                    };
+                    return NotFound(res);
+                }
+            }
+            catch (Exception ex)
+            {
+                res = new ResponseDTO()
+                {
+                    Code = 404,
+                    Message = "Error " + ex.Message,
+                    Data = null,
+                };
+                return NotFound(res);
+            }
+           // return Ok(res);
         }
     }
 }

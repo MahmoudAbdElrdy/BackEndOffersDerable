@@ -122,6 +122,16 @@ namespace BackEnd.Service.Service
                     Message = "User with this email adress already Exist"
                 };
             }
+            var existingUser2 = _dataContext.Users.Where(x => x.PhoneNumber == PhoneNumber);
+            if (existingUser2.Count() > 0)
+            {
+                return new ResponseDTO
+                {
+                    Data = null,
+                    Code = 404,
+                    Message  = "User with this PhoneNumber adress already Exist"
+                };
+            }
             int num = _random.Next();
             var newUser = new ApplicationUser
             {
@@ -232,11 +242,13 @@ namespace BackEnd.Service.Service
             };
             var token = TokenHandler.CreateToken(TokenDescriptor);
             await _dataContext.SaveChangesAsync();
-
+            dynamic User = new ExpandoObject();
+            User.token = TokenHandler.WriteToken(token);
+            User.Id = user.Id;
             return new ResponseDTO
             {
                 Code=200,
-                Data = TokenHandler.WriteToken(token)
+                Data = User
 
             };
         }
@@ -321,16 +333,16 @@ namespace BackEnd.Service.Service
                 var Check = _unitOfWork.ApplicationUser.GetEntity(x => x.PhoneNumber == PhoneNumber);
                 if (Check != null)
                 {
-                    _response.Data = Check;
+                    _response.Data = true;
                     _response.Code = 200;
                     _response.Message = "OK";
                 }
                 else
                 {
-                    _response.Data = null;
+                    _response.Data = false;
 
-                    _response.Code = 200;
-                    _response.Message = PhoneNumber + ":Not Found";
+                    _response.Code = 404;
+                    _response.Message = PhoneNumber + " Not Found";
                 }
 
             }
@@ -338,7 +350,7 @@ namespace BackEnd.Service.Service
             {
                 _response.Data = null;
 
-                _response.Code = 400;
+                _response.Code = 404;
                 _response.Message = ex.Message;
             }
             return _response;
@@ -351,9 +363,10 @@ namespace BackEnd.Service.Service
                 if (Check != null)
                 {
                     Check.confirmedMobile = true;
+                    Check.confirmed = true;
                     _unitOfWork.ApplicationUser.Update(Check);
                     var Save = _unitOfWork.Save();
-                    _response.Data = Check;
+                    _response.Data = Check.PhoneNumber;
                     _response.Code = 200;
                     _response.Message = "OK";
                 }
@@ -361,8 +374,8 @@ namespace BackEnd.Service.Service
                 {
                     _response.Data = null;
 
-                    _response.Code = 200;
-                    _response.Message = PhoneNumber + ":Not Found";
+                    _response.Code = 404;
+                    _response.Message = PhoneNumber + " Not Found";
                 }
 
             }
@@ -370,7 +383,7 @@ namespace BackEnd.Service.Service
             {
                 _response.Data = null;
 
-                _response.Code = 400;
+                _response.Code = 404;
                 _response.Message = ex.Message;
             }
             return _response;
@@ -404,6 +417,120 @@ namespace BackEnd.Service.Service
                     Data = user.PhoneNumber
                 };
             }
+        }
+        public IResponseDTO GetProfileClient(string ApplicationUserId) 
+        {
+            try
+            {
+                      dynamic UserProfile = new ExpandoObject();
+               
+                    var user2 = _unitOfWork.ApplicationUser.GetEntity(x => x.Id == ApplicationUserId);
+                    
+
+                    UserProfile.ApplicationuserId = ApplicationUserId;
+                    UserProfile.Image = user2.Image;
+                    UserProfile.Email = user2?.Email;
+                    UserProfile.FullName = user2?.FullName;
+                    UserProfile.userName = user2?.UserName;
+                    UserProfile.PhoneNumber = user2?.PhoneNumber;
+                    UserProfile.PhoneNumberConfirmed = user2?.PhoneNumberConfirmed;
+                    UserProfile.EmailConfirmed = user2?.EmailConfirmed;
+
+                
+                _response.Code = 200;
+                _response.Data = UserProfile;
+                _response.Message = "OK";
+                // UserProfile.Id = user.Id;
+            }
+            catch (Exception ex)
+            {
+                _response.Code = 200;
+                _response.Data = null;
+                _response.Data = ex.Message;
+
+            }
+
+            return _response;
+        }
+        public IResponseDTO UpdateUser(UpdateUser user)
+        {
+            try
+            {
+                var User = _unitOfWork.ApplicationUser.GetByID(user.ApplicationUserId);
+                var passwordHasher = new PasswordHasher<ApplicationUser>();
+                             if (!string.IsNullOrEmpty(user.Password))
+                    User.PasswordHash = passwordHasher.HashPassword(User, user.Password);
+
+                User.FullName = user.FullName;
+                User.UserName = user.UserName;
+                User.PhoneNumber = user.PhoneNumber;
+                User.Email = user.Email;
+               
+
+                _unitOfWork.ApplicationUser.Update(User);
+               
+
+                var Result = _unitOfWork.Save();
+                if (Result == "200")
+                {
+                    _response.Data = null;
+                    _response.Code = 200;
+                    _response.Message = "OK";
+
+                }
+                else
+                {
+                    _response.Data = null;
+                    _response.Code = 404;
+                    _response.Message = Result;
+                }
+
+            }
+            catch (Exception ex)
+            {
+                _response.Data = ex.Message;
+                _response.Code = 404;
+                _response.Message = ex.Message;
+            }
+            return _response;
+        }
+
+        public IResponseDTO UpdateImage(string ApplicationUserId, string Image)
+        { 
+            try
+            {
+                var User = _unitOfWork.ApplicationUser.GetByID(ApplicationUserId);
+              
+                User.Image = Image;
+              
+
+
+                _unitOfWork.ApplicationUser.Update(User);
+
+
+                var Result = _unitOfWork.Save();
+                if (Result == "200")
+                {
+                    _response.Data = null;
+                    _response.Code = 200;
+                    _response.Message = "OK";
+
+                }
+                else
+                {
+                    _response.Data = null;
+                    _response.Code = 404;
+                    _response.Message = Result;
+                }
+
+            }
+            catch (Exception ex)
+            {
+                _response.Data = ex.Message;
+                _response.Code = 404;
+                _response.Message = ex.Message;
+            }
+            return _response;
         }
 
         public IResponseDTO GetProfile(string ApplicationUserId)

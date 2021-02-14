@@ -66,7 +66,7 @@ namespace BackEnd.BAL.Repository
         {
             IQueryable<T> query = dbSet;
             query = query.Where(filter);
-            return query.SingleOrDefault();
+            return query.FirstOrDefault();
 
         }
 

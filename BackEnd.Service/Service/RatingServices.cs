@@ -49,7 +49,7 @@ namespace BackEnd.Service.Service
             {
              
                 _response.Data = null;
-               _response.Code = 400;
+               _response.Code = 404;
                 _response.Message = ex.Message;
                 _response.totalRowCount = 0;
             }
@@ -81,7 +81,7 @@ namespace BackEnd.Service.Service
             {
 
                 _response.Data = null;
-                _response.Code = 400;
+                _response.Code = 404;
                 _response.Message = ex.Message;
                 _response.totalRowCount = 0;
             }
@@ -108,7 +108,7 @@ namespace BackEnd.Service.Service
                 {
                     _response.Data = null;
                     _response.Message = save;
-                   _response.Code = 400;
+                   _response.Code = 404;
                    
                 }
             }
@@ -116,7 +116,7 @@ namespace BackEnd.Service.Service
             {
 
                 _response.Data = null;
-                _response.Code = 400;
+                _response.Code = 404;
                 _response.Message = ex.Message;
             }
             return _response;
@@ -147,7 +147,7 @@ namespace BackEnd.Service.Service
             {
 
                 _response.Data = null;
-                _response.Code = 400;
+                _response.Code = 404;
                 _response.Message = ex.Message;
             }
             return _response;
@@ -177,7 +177,7 @@ namespace BackEnd.Service.Service
                 {
                     _response.Data = null;
                     _response.Message = save;
-                   _response.Code = 400;
+                   _response.Code = 404;
                  
                 }
             }
@@ -185,7 +185,7 @@ namespace BackEnd.Service.Service
             {
 
                 _response.Data = null;
-                _response.Code = 400;
+                _response.Code = 404;
                 _response.Message = ex.Message;
             }
             return _response;
@@ -213,7 +213,7 @@ namespace BackEnd.Service.Service
                 {
                     _response.Data = null;
                 
-                   _response.Code = 400;
+                   _response.Code = 404;
                     _response.Message = save;
                 }
             }
@@ -221,7 +221,7 @@ namespace BackEnd.Service.Service
             {
 
                 _response.Data = null;
-                _response.Code = 400;
+                _response.Code = 404;
                 _response.Message = ex.Message;
             }
             return _response;
@@ -250,7 +250,7 @@ namespace BackEnd.Service.Service
                 {
                     _response.Data = null;
                   
-                   _response.Code = 400;
+                   _response.Code = 404;
                     _response.Message = save;
                 }
             }
@@ -258,7 +258,7 @@ namespace BackEnd.Service.Service
             {
 
                 _response.Data = null;
-                _response.Code = 400;
+                _response.Code = 404;
                 _response.Message = ex.Message;
             }
             return _response;

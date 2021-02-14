@@ -21,5 +21,8 @@ namespace BackEnd.Service.ISercice
         IResponseDTO verifyAccount(string PhoneNumber);
         IResponseDTO RestPasswordByPhone(ResetPasswordMobile resetPasswordMobile);
         IResponseDTO GetProfile(string UserId);
+        IResponseDTO GetProfileClient(string UserId); 
+        IResponseDTO UpdateUser(UpdateUser user);
+        IResponseDTO UpdateImage(string ApplicationUserId, string Image);
     }
 }
