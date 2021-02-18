@@ -435,8 +435,9 @@ namespace BackEnd.Service.Service
                     UserProfile.PhoneNumber = user2?.PhoneNumber;
                     UserProfile.PhoneNumberConfirmed = user2?.PhoneNumberConfirmed;
                     UserProfile.EmailConfirmed = user2?.EmailConfirmed;
+                    UserProfile.confirmedMobile = user2 ?.confirmedMobile;
+                    UserProfile.confirmed = user2?.confirmed;
 
-                
                 _response.Code = 200;
                 _response.Data = UserProfile;
                 _response.Message = "OK";
@@ -551,6 +552,8 @@ namespace BackEnd.Service.Service
                     UserProfile.PhoneNumber = user.User?.PhoneNumber;
                     UserProfile.PhoneNumberConfirmed = user.User?.PhoneNumberConfirmed;
                     UserProfile.EmailConfirmed = user.User?.EmailConfirmed;
+                    UserProfile.confirmedMobile = user.User?.confirmedMobile;
+                    UserProfile.confirmed = user.User?.confirmed;
 
                 }
                 if (user == null)

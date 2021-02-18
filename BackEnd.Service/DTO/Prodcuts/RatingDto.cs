@@ -8,7 +8,7 @@ namespace BackEnd.Service.DTO.Prodcuts
     {
         public int Id { get; set; }
         public DateTime? CreationDate { get; set; }
-        public int? ProductId { get; set; }
+        public int? DiscountId { get; set; }
         public int? ClientId { get; set; }
         public double? RatingValue { get; set; }
         public string RatingText { get; set; }
@@ -17,7 +17,7 @@ namespace BackEnd.Service.DTO.Prodcuts
     {
         public int Id { get; set; }
         public DateTime? CreationDate { get; set; }
-        public int? ProductId { get; set; }
+        public int? DiscountId { get; set; }
         public int? ClientId { get; set; }
         public string ClientName  { get; set; }
         public double? RatingValue { get; set; }

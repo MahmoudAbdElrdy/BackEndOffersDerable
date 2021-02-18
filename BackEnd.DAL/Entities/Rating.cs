@@ -7,7 +7,7 @@ namespace BackEnd.DAL.Entities
    public class Rating:Base
     {
         public int? DiscountId { get; set; } 
-        public Discount Product { get; set; }
+        public Discount Discount { get; set; } 
         public int? ClientId { get; set; } 
         public Client Client{ get; set; }
         public double? RatingValue { get; set; }
