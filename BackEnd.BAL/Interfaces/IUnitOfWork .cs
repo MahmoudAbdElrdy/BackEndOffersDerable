@@ -22,6 +22,8 @@ namespace BackEnd.BAL.Interfaces
         IGenericRepository<Company> Company { get; } 
         IGenericRepository<Discount> Discount { get; }  
         IGenericRepository<Rating> Rating{ get; }  
+        IGenericRepository<Client> Client { get; }  
+        IGenericRepository<Purchases> Purchases{ get; }  
        
     }
 }

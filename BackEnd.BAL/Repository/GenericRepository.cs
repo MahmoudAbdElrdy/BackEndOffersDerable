@@ -74,7 +74,26 @@ namespace BackEnd.BAL.Repository
         {
             return await dbSet.FindAsync(id);
         }
+        public int Add(T entity)
+        {
+            if (entity == null)
+            {
+                throw new ArgumentNullException($"{nameof(Add)} entity must not be null");
+            }
 
+            try
+            {
+                Context.Add(entity);
+                Context.SaveChanges();
+
+                var IdProperty = entity.GetType().GetProperty("Id").GetValue(entity, null);
+                return (int)IdProperty;
+            }
+            catch (Exception)
+            {
+                throw new Exception($"{nameof(entity)} could not be saved");
+            }
+        }
         public virtual object Insert(T Entity)
         {
             try

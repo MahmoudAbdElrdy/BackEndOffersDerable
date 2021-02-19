@@ -4,14 +4,16 @@ using BackEnd.DAL.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace BackEnd.DAL.Migrations
 {
     [DbContext(typeof(BakEndContext))]
-    partial class BakEndContextModelSnapshot : ModelSnapshot
+    [Migration("20210218181743_Client")]
+    partial class Client
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -334,9 +336,6 @@ namespace BackEnd.DAL.Migrations
                     b.Property<string>("DiscountDescription")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("DiscountId")
-                        .HasColumnType("int");
-
                     b.Property<double?>("DiscountRate")
                         .HasColumnType("float");
 
@@ -355,23 +354,14 @@ namespace BackEnd.DAL.Migrations
                     b.Property<DateTime?>("LastEditDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<double?>("NewPrice")
-                        .HasColumnType("float");
-
                     b.Property<int?>("ProductId")
                         .HasColumnType("int");
 
-                    b.Property<DateTime?>("PurchaseDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("SaleDate")
+                    b.Property<DateTime?>("PurchasesDate")
                         .HasColumnType("datetime2");
 
                     b.Property<DateTime?>("SatrtDate")
                         .HasColumnType("datetime2");
-
-                    b.Property<double?>("quantity")
-                        .HasColumnType("float");
 
                     b.HasKey("Id");
 

@@ -38,7 +38,7 @@ namespace BackEnd.BAL.Interfaces
         void AddRange(IEnumerable<T> entities);
         void RemovRange(IEnumerable<T> entities, string NoTrack = "");
 
-
+        int Add(T entity);
 
     }
 }

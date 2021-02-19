@@ -114,5 +114,7 @@ namespace BackEnd.BAL.Repository
         public IGenericRepository<Company> Company { get { return new GenericRepository<Company>(Context); } }
         public IGenericRepository<Discount> Discount { get { return new GenericRepository<Discount>(Context); } }
         public IGenericRepository<Rating> Rating { get { return new GenericRepository<Rating>(Context); } }
+        public IGenericRepository<Client> Client { get { return new GenericRepository<Client>(Context); } }
+        public IGenericRepository<Purchases> Purchases { get { return new GenericRepository<Purchases>(Context); } }
     }
 }

@@ -4,6 +4,7 @@ using BackEnd.DAL.Entities;
 using BackEnd.Service.DTO.Companies;
 using BackEnd.Service.ISercice;
 using BackEnd.Service.IService;
+using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -174,10 +175,29 @@ namespace BackEnd.Service.Service
         {
             try
             {
-                
-                var DbCompany = _mapper.Map<Company>(model);
+                var Company = _unitOfWork.Company.Get(x => x.Id == model.Id).FirstOrDefault();
+                var DbCompany = _mapper.Map(model, Company);
                 DbCompany.LastEditDate = DateTime.UtcNow.AddHours(2);
+                DbCompany.User = null;
                 _unitOfWork.Company.Update(DbCompany);
+
+                ///
+                
+                var ApplicationUserId = Company.ApplicationUserId;
+                var User = _unitOfWork.ApplicationUser.GetByID(ApplicationUserId);
+                var passwordHasher = new PasswordHasher<ApplicationUser>();
+                if (!string.IsNullOrEmpty(model.User.Password))
+                    User.PasswordHash = passwordHasher.HashPassword(User, model.User.Password);
+                
+
+                User.FullName = model.User.FullName;
+                User.UserName = model.User.UserName;
+                User.PhoneNumber = model.User.PhoneNumber;
+                User.Email = model.User.Email;
+                User.Image = model.User.Image;
+
+
+                _unitOfWork.ApplicationUser.Update(User);
                 var save = _unitOfWork.Save();
 
                 if (save == "200")

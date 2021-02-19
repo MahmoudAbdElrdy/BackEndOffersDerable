@@ -11,6 +11,8 @@ using BackEnd.BAL.Interfaces;
 using BackEnd.BAL.Models;
 using BackEnd.DAL.Context;
 using BackEnd.DAL.Entities;
+using BackEnd.Service.DTO.Client;
+using BackEnd.Service.DTO.Companies;
 using BackEnd.Service.ISercice;
 using BackEnd.Service.IService;
 using Microsoft.AspNetCore.Identity;
@@ -141,6 +143,7 @@ namespace BackEnd.Service.Service
                 verficationCode = num,
                 PhoneNumber = PhoneNumber,
                 confirmed = true,
+                Image=Image
              
             };
 
@@ -153,6 +156,14 @@ namespace BackEnd.Service.Service
             {
                 var createdUser = await _userManager.CreateAsync(newUser, Password);
                 UserId = newUser.Id;
+                if(Role== "Client")
+                {
+                    Client client = new Client();
+                    client.ApplicationUserId = newUser.Id;
+                    _unitOfWork.Client.Insert(client);
+                    _unitOfWork.Save();
+                    
+                }
                 if (!createdUser.Succeeded)
                 {
                     return new ResponseDTO
@@ -650,7 +661,7 @@ namespace BackEnd.Service.Service
                 };
             }
         }
-
+      
 
     }
 }

@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using BackEnd.BAL.Models;
 using BackEnd.DAL.Entities;
+using BackEnd.Service.DTO.Client;
 using BackEnd.Service.DTO.Companies;
 using BackEnd.Service.DTO.Prodcuts;
 using System;
@@ -60,6 +61,21 @@ namespace BackEnd.Service.MappingProfiles
             CreateMap<Rating, ShowRatingDto>().
                 ForMember(x => x.ClientId, x => x.MapFrom(x => x.ClientId))
         .ForMember(x => x.ClientName, x => x.MapFrom(x => x.Client.User.FullName)).ReverseMap();
+            CreateMap<Client, ClientDto>()
+                .ForMember(x => x.FullName, x => x.MapFrom(x => x.User.FullName))
+                .ForMember(x => x.PhoneNumber, x => x.MapFrom(x => x.User.PhoneNumber))
+                .ForMember(x => x.Image, x => x.MapFrom(x => x.User.Image))
+                .ReverseMap();
+            CreateMap<Purchases, ShowPurchasesDto>()
+              .ForMember(x => x.ApplicationUserId, x => x.MapFrom(x => x.Client.ApplicationUserId))
+              .ForMember(x => x.CompanyName, x => x.MapFrom(x => x.Product.Company.User.FullName))
+              .ForMember(x => x.DiscountId, x => x.MapFrom(x => x.DiscountId))
+              .ForMember(x => x.RandomCode, x => x.MapFrom(x => x.Client.Code))
+              .ForMember(x => x.NewPrice, x => x.MapFrom(x => x.NewPrice))
+              .ForMember(x => x.PurchaseDate, x => x.MapFrom(x => x.PurchaseDate))
+              .ForMember(x => x.SaleDate, x => x.MapFrom(x => x.SaleDate))
+              .ForMember(x => x.quantity, x => x.MapFrom(x => x.quantity))
+              .ReverseMap();
         }
 
         string getPath()
