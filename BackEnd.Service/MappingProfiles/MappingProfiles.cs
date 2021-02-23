@@ -34,6 +34,7 @@ namespace BackEnd.Service.MappingProfiles
             CreateMap<Discount, ShowListProductDto>()
            .ForMember(dest=>dest.ProductDescription, m=>m.MapFrom(x=>x.Product.Description))
            .ForMember(dest=>dest.OldPrice,m=>m.MapFrom(x=>x.Product.Price))
+           .ForMember(dest=>dest.DiscountDescription, m=>m.MapFrom(x=>x.DiscountDescription))
            .ForMember(dest=>dest.ProductId,m=>m.MapFrom(x=>x.Product.Id))
            .ForMember(dest=>dest.ProdcutName,m=>m.MapFrom(x=>x.Product.ProdcutName))
            .ForMember(dest=>dest.ProductImage,m=>m.MapFrom(x=>x.Product.ProductImages.FirstOrDefault().ProductImage))
@@ -75,6 +76,8 @@ namespace BackEnd.Service.MappingProfiles
               .ForMember(x => x.PurchaseDate, x => x.MapFrom(x => x.PurchaseDate))
               .ForMember(x => x.SaleDate, x => x.MapFrom(x => x.SaleDate))
               .ForMember(x => x.quantity, x => x.MapFrom(x => x.quantity))
+              .ForMember(x => x.ProductName, x => x.MapFrom(x => x.Product.ProdcutName))
+              .ForMember(x => x.PhoneNumber, x => x.MapFrom(x => x.Client.User.PhoneNumber))
               .ReverseMap();
         }
 

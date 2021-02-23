@@ -30,6 +30,7 @@ namespace BackEnd.Service.DTO.Prodcuts
     {
         public int Id { get; set; }
         public string ProdcutName { get; set; }
+        public string DiscountDescription { get; set; }
         public string ProductDescription { get; set; }  
         public double? NewPrice { get; set; }
         public double? OldPrice { get; set; } 

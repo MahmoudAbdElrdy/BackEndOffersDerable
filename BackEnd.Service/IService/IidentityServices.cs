@@ -18,7 +18,7 @@ namespace BackEnd.Service.ISercice
         Task<IResponseDTO> resetPasswordVerfayCode(UserVerfayResetPasswordCode request);
         Task<IResponseDTO> ResetPassword(ResetPasswordVm resetpasswordVm);
         IResponseDTO checkPhone(string PhoneNumber);
-        IResponseDTO verifyAccount(string PhoneNumber);
+        IResponseDTO verifyAccount(string PhoneNumber, string resetPasswordCode);
         IResponseDTO RestPasswordByPhone(ResetPasswordMobile resetPasswordMobile);
         IResponseDTO GetProfile(string UserId);
         IResponseDTO GetProfileClient(string UserId); 

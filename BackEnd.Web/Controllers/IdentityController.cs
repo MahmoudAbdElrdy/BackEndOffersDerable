@@ -120,9 +120,9 @@ namespace Project.Controllers.V1
             return Ok(res);
         }
         [HttpPost("verifyAccount")]
-        public ActionResult<IResponseDTO> verifyAccount(string Phone)
+        public ActionResult<IResponseDTO> verifyAccount(string Phone, string resetPasswordCode)
         {
-            var res = _identityService.verifyAccount(Phone);
+            var res = _identityService.verifyAccount(Phone, resetPasswordCode);
             if (res.Code == 404)
             {
                 return NotFound(res);

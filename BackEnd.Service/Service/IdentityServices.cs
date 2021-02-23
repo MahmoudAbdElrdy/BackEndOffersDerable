@@ -1,8 +1,10 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Dynamic;
 using System.IdentityModel.Tokens.Jwt;
+using System.IO;
 using System.Linq;
+using System.Net;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
@@ -174,7 +176,10 @@ namespace BackEnd.Service.Service
                     };
 
                 }
+                
+
                 await _userManager.AddToRoleAsync(newUser,Role);
+                var Respones = SendMessage(PhoneNumber, num.ToString());
                 return new ResponseDTO
                 {
                     Data = UserId,
@@ -213,7 +218,82 @@ namespace BackEnd.Service.Service
 
 
         }
+        public IResponseDTO SendMessage(string PhoneNumber, string Code)
+        {
+            string myURI = "https://api.bulksms.com/v1/messages";
 
+            // change these values to match your own account
+            string myUsername = "dealsapp2";
+            string myPassword = "DealsApp123";
+
+            // the details of the message we want to send
+            // String strPost = "?user=9030888111&password=password&msg=" + message + "&sender=OPTINS" + "&mobile=mobnum" + "&type=1";
+            string myData = "{to: " + AddDoubleQuotes(PhoneNumber) + ", body:" + AddDoubleCode(Code) + "}";
+            //string myData = "" +
+            //    "{to: \"+'PhoneNumber'+\"," +
+            //    " body:\"تم تاكيد شراء العرض  توجه الي التاجر لاستلام العرض  ومعك كود العرض:+'Code'+ \"}";
+            //          
+            var request = WebRequest.Create(myURI);
+
+            // supply the credentials
+            request.Credentials = new NetworkCredential(myUsername, myPassword);
+            request.PreAuthenticate = true;
+            // we want to use HTTP POST
+            request.Method = "POST";
+            // for this API, the type must always be JSON
+            request.ContentType = "application/json";
+
+            // Here we use Unicode encoding, but ASCIIEncoding would also work
+            var encoding = new UnicodeEncoding();
+            var encodedData = encoding.GetBytes(myData);
+
+            // Write the data to the request stream
+            var stream = request.GetRequestStream();
+            stream.Write(encodedData, 0, encodedData.Length);
+            stream.Close();
+
+            // try ... catch to handle errors nicely
+            try
+            {
+                // make the call to the API
+                var response = request.GetResponse();
+
+                // read the response and print it to the console
+                var reader = new StreamReader(response.GetResponseStream());
+                Console.WriteLine(reader.ReadToEnd());
+                return new ResponseDTO()
+                {
+                    Data = reader.ReadToEnd(),
+                    Code = 200,
+                    Message = "Sent Successfully"
+                };
+            }
+            catch (WebException ex)
+            {
+                // show the general message
+                Console.WriteLine("An error occurred:" + ex.Message);
+
+                // print the detail that comes with the error
+                var reader = new StreamReader(ex.Response.GetResponseStream());
+                Console.WriteLine("Error details:" + reader.ReadToEnd());
+
+                // dynamic stuff1 = Newtonsoft.Json.JsonConvert.DeserializeObject(res);
+
+                _response.Data = reader.ReadToEnd();
+                _response.Message = ex.Message;
+                _response.Code = 404;
+                return _response;
+            }
+
+        }
+        public string AddDoubleQuotes(string value)
+        {
+            return "\"" + value + "\"";
+        }
+        public string AddDoubleCode(string value)
+        {
+            return "\" كود التسجيل:" + value + "\"";
+        }
         //return await GenerateAutheticationForResultForUser(newUser);
         private async Task<ResponseDTO> GenerateAutheticationForResultForUser(ApplicationUser user)
         {
@@ -342,11 +422,40 @@ namespace BackEnd.Service.Service
             try
             {
                 var Check = _unitOfWork.ApplicationUser.GetEntity(x => x.PhoneNumber == PhoneNumber);
+                int num = _random.Next();
+              
                 if (Check != null)
                 {
-                    _response.Data = true;
-                    _response.Code = 200;
-                    _response.Message = "OK";
+                    var Respones = SendMessage(PhoneNumber, num.ToString());
+                    if (Respones.Code == 200)
+                    {
+                         Check.resetPasswordCode = num;
+                        _unitOfWork.ApplicationUser.Update(Check);
+                       
+                        var Save = _unitOfWork.Save();
+                        if (Save == "200")
+                        {
+                            _response.Data = true;
+                            _response.Code = 200;
+                            _response.Message = "OK";
+                        }
+                        else
+                        {
+                            _response.Data = false;
+
+                            _response.Code = 404;
+                            _response.Message = "Not Saved";
+                        }
+
+                    }
+                    else
+                    {
+                        _response.Data = false;
+
+                        _response.Code = 404;
+                        _response.Message = "SMS failure";
+                    }
+                   
                 }
                 else
                 {
@@ -366,18 +475,16 @@ namespace BackEnd.Service.Service
             }
             return _response;
         }
-        public IResponseDTO verifyAccount(string PhoneNumber)
+        public IResponseDTO verifyAccount(string PhoneNumber,string resetPasswordCode)
         {
             try
             {
-                var Check = _unitOfWork.ApplicationUser.GetEntity(x => x.PhoneNumber == PhoneNumber);
+                var Check = _unitOfWork.ApplicationUser.GetEntity(x => x.PhoneNumber == PhoneNumber&&x.resetPasswordCode==int.Parse(resetPasswordCode));
                 if (Check != null)
                 {
                     Check.confirmedMobile = true;
                     Check.confirmed = true;
-                    _unitOfWork.ApplicationUser.Update(Check);
-                    var Save = _unitOfWork.Save();
-                    _response.Data = Check.PhoneNumber;
+                   _response.Data = Check.PhoneNumber;
                     _response.Code = 200;
                     _response.Message = "OK";
                 }

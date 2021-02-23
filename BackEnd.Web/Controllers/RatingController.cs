@@ -52,7 +52,7 @@ namespace BackEnd.Web.Controllers
         #endregion
 
         #region Put : api/Rating/Update
-        [HttpPut("Update")]
+        [HttpPost("Update")]
         public IResponseDTO Update([FromBody]RatingDto model)
         {
 
@@ -62,7 +62,7 @@ namespace BackEnd.Web.Controllers
         #endregion
 
         #region Delete : api/Rating/Delete
-        [HttpDelete("Delete")]
+        [HttpGet("Delete")]
         public IResponseDTO Delete(int id)
         {
             var result = ServicesRating.Delete(id);

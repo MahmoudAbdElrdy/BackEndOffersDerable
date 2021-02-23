@@ -32,6 +32,7 @@ using BackEnd.Service.MappingProfiles;
 using EmailService;
 using BackEnd.Service.IService;
 using Microsoft.Extensions.FileProviders;
+using Microsoft.AspNetCore.Http;
 
 namespace BackEnd.Web
 {
@@ -106,10 +107,9 @@ namespace BackEnd.Web
             services.AddCors(options =>
             {
                 options.AddPolicy("CorsPolicy",
-                    builder => builder.WithOrigins(Configuration["ApplicationSettings:Client_URL"].ToString())
-                    .AllowAnyMethod()
-                    .AllowAnyHeader()
-                    .AllowCredentials());
+                    builder => builder.AllowAnyOrigin()
+                        .AllowAnyMethod()
+                        .AllowAnyHeader());
             });
             #endregion
             var emailConfig = Configuration
@@ -226,6 +226,12 @@ namespace BackEnd.Web
       });
             app.UseStaticFiles(new StaticFileOptions
             {
+                OnPrepareResponse = ctx => {
+                    ctx.Context.Response.Headers.Append("Access-Control-Allow-Origin", "*");
+                    ctx.Context.Response.Headers.Append("Access-Control-Allow-Headers",
+                      "Origin, X-Requested-With, Content-Type, Accept");
+                },
+
                 FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "UploadFiles")),
                 RequestPath = "/wwwroot/UploadFiles"
             });

@@ -53,7 +53,7 @@ namespace BackEnd.Web.Controllers
         #endregion
 
         #region Put : api/Category/Update
-        [HttpPut("Update")]
+        [HttpPost("Update")]
         public ActionResult<IResponseDTO> Update([FromBody]CategoryDto model)
         {
 
@@ -67,7 +67,7 @@ namespace BackEnd.Web.Controllers
         #endregion
 
         #region Delete : api/Category/Delete
-        [HttpDelete("Delete")]
+        [HttpGet("Delete")]
         public ActionResult<IResponseDTO> Delete(int id)
         {
             var result = ServicesCategory.Delete(id);

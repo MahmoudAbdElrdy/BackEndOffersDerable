@@ -8,8 +8,7 @@ namespace BackEnd.Service.DTO.Client
     {
         public string ApplicationUserId { get; set; }
         public int? DiscountId { get; set; }
-        public double? quantity { get; set; }
-        public string RandomCode { get; set; }
+        public string PhoneNumber { get; set; } 
         public double? NewPrice { get; set; } 
     }
     public class ShowPurchasesDto 
@@ -22,6 +21,8 @@ namespace BackEnd.Service.DTO.Client
         public DateTime? PurchaseDate { get; set; }
         public DateTime? SaleDate { get; set; }
         public double? NewPrice { get; set; }
+        public string ProductName { get; set; } 
+        public string PhoneNumber { get; set; }
 
     }
 }

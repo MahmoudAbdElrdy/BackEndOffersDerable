@@ -73,7 +73,7 @@ namespace BackEnd.Web.Controllers
         //#endregion
 
         //#region Put : api/Purchases/Update
-        //[HttpPut("Update")]
+        //[HttpPost("Update")]
         //public ActionResult<IResponseDTO> Update([FromBody]PurchasesDto model)
         //{
 
@@ -87,7 +87,7 @@ namespace BackEnd.Web.Controllers
         //#endregion
 
         //#region Delete : api/Purchases/Delete
-        //[HttpDelete("Delete")]
+        //[HttpGet("Delete")]
         //public ActionResult<IResponseDTO> Delete(int id)
         //{
         //    var result = ServicesPurchases.Delete(id);
