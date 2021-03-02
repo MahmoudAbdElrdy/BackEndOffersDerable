@@ -15,11 +15,6 @@ namespace BackEnd.DAL.Entities
         public string FullName { get; set; }
         public int? resetPasswordCode { get; set; }
         public string Image { get; set; }
-        [ForeignKey("tblCountries")]
-        public int? tblCountriesId { get; set; }
-        [ForeignKey("tblCities")]
-        public int? tblCitiesId { get; set; }
-        public virtual tblCountries tblCountries { get; set; }
-        public virtual tblCities tblCities { get; set; }
+       public List<ProductFavourite> ProductFavourites { get; set; }
     }
 }

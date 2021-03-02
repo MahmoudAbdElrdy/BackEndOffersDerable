@@ -4,14 +4,16 @@ using BackEnd.DAL.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace BackEnd.DAL.Migrations
 {
     [DbContext(typeof(BakEndContext))]
-    partial class BakEndContextModelSnapshot : ModelSnapshot
+    [Migration("20210301131346_City")]
+    partial class City
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -287,37 +289,6 @@ namespace BackEnd.DAL.Migrations
                     b.HasIndex("tblCountriesId");
 
                     b.ToTable("Product");
-                });
-
-            modelBuilder.Entity("BackEnd.DAL.Entities.ProductFavourite", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("ApplicationUserId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<DateTime?>("CreationDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool?>("IsDelete")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTime?>("LastEditDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int?>("ProductId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ApplicationUserId");
-
-                    b.HasIndex("ProductId");
-
-                    b.ToTable("ProductFavourite");
                 });
 
             modelBuilder.Entity("BackEnd.DAL.Entities.ProductImages", b =>
@@ -713,17 +684,6 @@ namespace BackEnd.DAL.Migrations
                     b.HasOne("BackEnd.DAL.Entities.tblCountries", "tblCountries")
                         .WithMany()
                         .HasForeignKey("tblCountriesId");
-                });
-
-            modelBuilder.Entity("BackEnd.DAL.Entities.ProductFavourite", b =>
-                {
-                    b.HasOne("BackEnd.DAL.Entities.ApplicationUser", "ApplicationUser")
-                        .WithMany("ProductFavourites")
-                        .HasForeignKey("ApplicationUserId");
-
-                    b.HasOne("BackEnd.DAL.Entities.Product", "Products")
-                        .WithMany("ProductFavourites")
-                        .HasForeignKey("ProductId");
                 });
 
             modelBuilder.Entity("BackEnd.DAL.Entities.ProductImages", b =>

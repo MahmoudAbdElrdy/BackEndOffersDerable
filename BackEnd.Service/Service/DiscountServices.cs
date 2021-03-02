@@ -228,28 +228,24 @@ namespace BackEnd.Service.Service
             }
             return _response;
         }
-
-       
-
-       
-        public IResponseDTO GetAvailableDiscountWithSupDiscount()
-        {
-            throw new NotImplementedException();
-        }
-
-
-
-
-        #endregion
-
-        public IResponseDTO GetAllProdcut(int pageNumber = 0, int pageSize = 0, int CategoryId = 0)
+       #endregion
+        public IResponseDTO GetAllProdcut(int pageNumber = 0, int pageSize = 0, int CategoryId = 0,int CityId=0,string ProdcutName="",string ApplicationUserId="")
         {
             try 
             {
                
                 var result = _unitOfWork.Discount.Get(filter:
                     x => (CategoryId !=0? 
-                    x.Product.CategoryId == (int?)CategoryId : true)
+                    x.Product.CategoryId == (int?)CategoryId : true
+                    )
+                    &&
+                    (CityId != 0 ?
+                    x.Product.tblCitiesId== (int?)CityId : true
+                    )
+                     &&
+                    (!string.IsNullOrEmpty(ProdcutName) ?
+                    x.Product.ProdcutName.Contains(ProdcutName) : true
+                    )
                     && x.IsDelete == false
                 ,
                     includeProperties: "Product.ProductImages,Product.Category", 
@@ -257,7 +253,25 @@ namespace BackEnd.Service.Service
                 if (result != null && result.Count > 0)
                 {
                     var resultList = _mapper.Map<List<ShowListProductDto>>(result);
-                    
+                    var Res = resultList
+                        .ToList();
+                    var Fav = GetAllProdcutUser(ApplicationUserId);
+                    foreach(var item in Res)
+                    {
+                        if (Fav.Any(i => i.ApplicationUserId== ApplicationUserId&&i.ProductId==item.ProductId))
+                        {
+                            item.IsFavourite = true;
+                        }
+                        else
+                        {
+                            item.IsFavourite = false;
+                        }
+
+                    }
+                    //foreach(var Item in resultList)
+                    //  {
+                    //      if(ApplicationUserId)
+                    //  }
                     _response.Data = resultList;
                     _response.Code = 200;
                     _response.Message = "OK";
@@ -277,6 +291,34 @@ namespace BackEnd.Service.Service
                 _response.Message = ex.Message;
             }
             return _response;
+        }
+
+        public  List<ProductFavourite> GetAllProdcutUser(string ApplicationUserId = "")
+        {
+            var resultList = new List<ProductFavourite>();
+            try
+            {
+               
+                var result = _unitOfWork.ProductFavourite.Get(x => x.ApplicationUserId == ApplicationUserId
+                    && x.IsDelete == false
+                
+                   ).ToList();
+                if (result != null && result.Count > 0)
+                {
+                  
+                    return result;
+                }
+                else
+                {
+                    return resultList;
+                }
+            }
+            catch (Exception ex)
+            {
+
+                return resultList;
+            }
+          
         }
 
         public IResponseDTO GetProdcutById(int? id) 

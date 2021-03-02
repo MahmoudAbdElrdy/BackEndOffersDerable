@@ -12,6 +12,7 @@ namespace BackEnd.Service.DTO.Prodcuts
         public double? Price { get; set; }
         public int? CategoryId { get; set; }
         public int? CompanyId { get; set; }
+        public int? tblCitiesId { get; set; }
         public List<string> ProductImages { get; set; }
     }
     public class ShowProductDto
@@ -25,6 +26,7 @@ namespace BackEnd.Service.DTO.Prodcuts
         public int? CompanyId { get; set; }
         public string CompanyName { get; set; }
         public List<string> ProductImages { get; set; }
+        public int? tblCitiesId { get; set; }
     }
     public class ShowListProductDto 
     {
@@ -36,5 +38,11 @@ namespace BackEnd.Service.DTO.Prodcuts
         public double? OldPrice { get; set; } 
         public string ProductImage  { get; set; }
         public int ProductId { get; set; }
+        public bool? IsFavourite { get; set; }
+    }
+    public class ProductsFavouriteVm
+    {
+        public string ApplicationUserId { get; set; } 
+        public int? ProductId { get; set; }
     }
 }

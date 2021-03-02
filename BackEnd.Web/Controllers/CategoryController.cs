@@ -37,8 +37,19 @@ namespace BackEnd.Web.Controllers
             return Ok(result);
           
         }
+        [HttpGet("GetAllCities")]
+        public ActionResult<IResponseDTO> GetAllCities(int pageNumber = 0, int pageSize = 0)
+        {
+            var result = ServicesCategory.GetAllCities(pageNumber, pageSize);
+            if (result.Code == 404)
+            {
+                return NotFound(result);
+            }
+            return Ok(result);
+
+        }
         #endregion
-      
+
         #region Get : api/Category/GetById
         [HttpGet("GetById")]
         public ActionResult<IResponseDTO> GetById(int id)

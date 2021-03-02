@@ -9,7 +9,7 @@ namespace BackEnd.Service.IService
     {
         IResponseDTO Insert(DiscountDto entity);
         IResponseDTO GetAll(int pageNumber = 0, int pageSize = 0);
-        IResponseDTO GetAllProdcut(int pageNumber = 0, int pageSize = 0, int CategoryId = 0);
+        IResponseDTO GetAllProdcut(int pageNumber = 0, int pageSize = 0, int CategoryId = 0, int CityId = 0, string ProdcutName = "",string ApplicationUserId = "");
         IResponseDTO GetByIdAsync(int? id);
         IResponseDTO Delete(int id);
         IResponseDTO Update(DiscountDto entity);

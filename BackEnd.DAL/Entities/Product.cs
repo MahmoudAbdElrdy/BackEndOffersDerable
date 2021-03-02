@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Text;
 
 namespace BackEnd.DAL.Entities
@@ -13,8 +14,14 @@ namespace BackEnd.DAL.Entities
         public Category Category { get; set; }
         public int? CompanyId { get; set; }
         public Company Company { get; set; }
+        [ForeignKey("tblCountries")]
+        public int? tblCountriesId { get; set; }
+        [ForeignKey("tblCities")]
+        public int? tblCitiesId { get; set; }
+        public  tblCountries tblCountries { get; set; }
+        public  tblCities tblCities { get; set; }
         public ICollection<Review> Reviews{ get; set; }
         public ICollection<ProductImages> ProductImages { get; set; }
-      
+        public List<ProductFavourite> ProductFavourites { get; set; }
     }
 }

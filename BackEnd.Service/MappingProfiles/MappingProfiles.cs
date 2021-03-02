@@ -59,6 +59,7 @@ namespace BackEnd.Service.MappingProfiles
          x.DiscountRate : (100 * (x.Product.Price - x.DiscountValue) / x.Product.Price)
          ));
             CreateMap<Rating, RatingDto>().ReverseMap();
+            CreateMap<tblCities, CityDto>().ReverseMap();
             CreateMap<Rating, ShowRatingDto>().
                 ForMember(x => x.ClientId, x => x.MapFrom(x => x.ClientId))
         .ForMember(x => x.ClientName, x => x.MapFrom(x => x.Client.User.FullName)).ReverseMap();

@@ -52,9 +52,38 @@ namespace BackEnd.Service.Service
             }
             return _response;
         }
+
+        public IResponseDTO GetAllCities(int pageNumber = 0, int pageSize = 0) 
+        {
+            try
+            {
+                var result = _unitOfWork.Cities.Get(page: pageNumber, Take: pageSize).ToList();
+                if (result != null && result.Count > 0)
+                {
+                    var resultList = _mapper.Map<List<CityDto>>(result);
+                    _response.Data = resultList;
+                    _response.Code = 200;
+                    _response.Message = "OK";
+                }
+                else
+                {
+                    _response.Data = null;
+                    _response.Code = 200;
+                    _response.Message = "No Data";
+                }
+            }
+            catch (Exception ex)
+            {
+
+                _response.Data = null;
+                _response.Code = 404;
+                _response.Message = ex.Message;
+            }
+            return _response;
+        }
         #endregion
 
- 
+
         #region Remove(CategoryDto model)
         public IResponseDTO Remove(CategoryDto model)
         {

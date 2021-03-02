@@ -5,6 +5,7 @@ using BackEnd.Service.DTO.Prodcuts;
 using BackEnd.Service.IService;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -52,9 +53,39 @@ namespace BackEnd.Service.Service
             }
             return _response;
         }
+        public IResponseDTO GetAllArchive(int pageNumber = 0, int pageSize = 0)
+        {
+            try
+            {
+                var result = _unitOfWork.Prodcut.Get(x => x.IsDelete == true, includeProperties: "ProductImages,Company.User,Category", page: pageNumber, Take: pageSize).ToList();
+                if (result != null && result.Count > 0)
+                {
+                    var resultList = _mapper.Map<List<ShowProductDto>>(result);
+                    _response.Data = resultList;
+                    _response.Code = 200;
+                    _response.Message = "OK";
+                }
+                else
+                {
+                    _response.Data = null;
+                    _response.Code = 200;
+                    _response.Message = "No Data";
+                }
+            }
+            catch (Exception ex)
+            {
+
+                _response.Data = null;
+                _response.Code = 404;
+                _response.Message = ex.Message;
+            }
+            return _response;
+        }
+
+
         #endregion
 
- 
+
         #region Remove(ProdcutDto model)
         public IResponseDTO Remove(ProductDto model)
         {
@@ -200,7 +231,132 @@ namespace BackEnd.Service.Service
             return _response;
         }
         #endregion
+        public IResponseDTO GetAllProdcutUser(int pageNumber = 0, int pageSize = 0,string ApplicationUserId="")
+        {
+            try
+            {
 
+                var result = _unitOfWork.ProductFavourite.Get(x=>x.ApplicationUserId==ApplicationUserId
+                    && x.IsDelete == false
+                ,
+                    includeProperties: "Products.ProductImages,Products.Category,Products.Company.User",
+                    page: pageNumber, Take: pageSize).ToList();
+                if (result != null && result.Count > 0)
+                {
+                    var Prodcut = result.Select(x=>x.Products).ToList();
+                    var resultList = _mapper.Map<List<ShowProductDto>>(Prodcut);
+
+                    _response.Data = resultList;
+                    _response.Code = 200;
+                    _response.Message = "OK";
+                }
+                else
+                {
+                    _response.Data = null;
+                    _response.Code = 200;
+                    _response.Message = "No Data";
+                }
+            }
+            catch (Exception ex)
+            {
+
+                _response.Data = null;
+                _response.Code = 404;
+                _response.Message = ex.Message;
+            }
+            return _response;
+        }
+        private bool favouriteCheck(string ApplicationUserId, int? ProductId)
+        {
+
+            var favouriteList = _unitOfWork.ProductFavourite.Get(x => x.ApplicationUserId == ApplicationUserId && x.ProductId == ProductId).ToList();
+            if (favouriteList != null && favouriteList.Count >= 1)
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+
+        }
+        public IResponseDTO favourite(ProductsFavouriteVm ProductFavVm)
+        {
+            if (favouriteCheck(ProductFavVm.ApplicationUserId, ProductFavVm.ProductId))
+            {
+                var Favourite = new ProductFavourite();
+                Favourite.ProductId = ProductFavVm.ProductId;
+                Favourite.ApplicationUserId = ProductFavVm.ApplicationUserId;
+                _unitOfWork.ProductFavourite.Insert(Favourite);
+             var Res=_unitOfWork.Save();
+                if (Res == "200")
+                {
+                    return new ResponseDTO
+                    {
+
+                        Code = 200,
+                        Message = "favourite offer success",
+                        Data = ProductFavVm
+                    };
+                }
+                else
+                {
+                    return new ResponseDTO
+                    {
+
+                        Code = 404,
+                        Message = "Not Saved",
+                        Data = ProductFavVm
+                    };
+                }
+              
+            }
+            else
+            {
+                return new ResponseDTO
+                {
+                    Code = 404,
+                    Message = "User Before Choose This Product as favourite",
+                    Data = ProductFavVm
+                };
+
+            }
+
+        }
+        public IResponseDTO DeleteProductFavourite(int id) 
+        {
+            try
+            {
+
+                var DbProdcut = _unitOfWork.ProductFavourite.GetByID(id);
+                DbProdcut.IsDelete = true;
+                DbProdcut.LastEditDate = DateTime.UtcNow.AddHours(2);
+                _unitOfWork.ProductFavourite.Delete(DbProdcut);
+                var save = _unitOfWork.Save();
+
+                if (save == "200")
+                {
+                    _response.Data = id;
+                    _response.Code = 200;
+                    _response.Message = "OK";
+                }
+                else
+                {
+                    _response.Data = null;
+
+                    _response.Code = 404;
+                    _response.Message = save;
+                }
+            }
+            catch (Exception ex)
+            {
+
+                _response.Data = null;
+                _response.Code = 404;
+                _response.Message = ex.Message;
+            }
+            return _response;
+        }
         #region Delete(ProdcutDto model)
         public IResponseDTO Delete(int id)
         {
@@ -210,7 +366,7 @@ namespace BackEnd.Service.Service
                 var DbProdcut = _unitOfWork.Prodcut.GetByID(id);
                 DbProdcut.IsDelete = true;
                 DbProdcut.LastEditDate = DateTime.UtcNow.AddHours(2);
-                _unitOfWork.Prodcut.Delete(DbProdcut);
+                _unitOfWork.Prodcut.Update(DbProdcut);
                 var save = _unitOfWork.Save();
 
                 if (save == "200")
@@ -237,17 +393,77 @@ namespace BackEnd.Service.Service
             return _response;
         }
 
-       
-
-       
-        public IResponseDTO GetAvailableProdcutWithSupProdcut()
+        public IResponseDTO RemoveFromDB(int id) 
         {
-            throw new NotImplementedException();
+            try
+            {
+
+                var DbProdcut = _unitOfWork.Prodcut.GetByID(id);
+                DbProdcut.IsDelete = true;
+                DbProdcut.LastEditDate = DateTime.UtcNow.AddHours(2);
+                var Images = _unitOfWork.ProductImages.Get(x => x.ProductId == id);
+                var ProductFavourites = _unitOfWork.ProductFavourite.Get(x => x.ProductId == id);
+                var DisCount = _unitOfWork.Discount.Get(x=>x.ProductId==id);
+                if (DisCount.Count()>0)
+                {
+                    foreach (var Dis in DisCount)
+                    {
+                        _unitOfWork.Discount.Delete(Dis.Id);
+
+                    }
+
+                }
+                if (ProductFavourites.Count() > 0)
+                {
+                    foreach (var Favourite in ProductFavourites)
+                    {
+                        _unitOfWork.ProductFavourite.Delete(Favourite.Id);
+
+                    }
+                }
+                if (Images.Count() > 0)
+                {
+                    var folderName = Path.Combine("wwwroot/UploadFiles");
+                    foreach (var Image in Images)
+                    {
+                        _unitOfWork.ProductImages.Delete(Image.Id);
+                      
+                      
+                        var file = System.IO.Path.Combine(folderName, Image.ProductImage);
+                        try
+                        {
+                            System.IO.File.Delete(file);
+                        }
+                        catch { }
+                    }
+                }
+                _unitOfWork.Prodcut.Delete(DbProdcut);
+                var save = _unitOfWork.Save();
+
+                if (save == "200")
+                {
+                    _response.Data = id;
+                    _response.Code = 200;
+                    _response.Message = "OK";
+                }
+                else
+                {
+                    _response.Data = null;
+
+                    _response.Code = 404;
+                    _response.Message = save;
+                }
+            }
+            catch (Exception ex)
+            {
+
+                _response.Data = null;
+                _response.Code = 404;
+                _response.Message = ex.Message;
+            }
+            return _response;
         }
 
-       
-
-       
         #endregion
     }
 }

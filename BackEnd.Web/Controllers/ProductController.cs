@@ -33,6 +33,12 @@ namespace BackEnd.Web.Controllers
             var result = ServicesProduct.GetAll(pageNumber, pageSize);
            if (result.Code == 404) {  return NotFound(result);}  return Ok(result);
         }
+        [HttpGet("GetAllArchive")]
+        public ActionResult<IResponseDTO> GetAllArchive(int pageNumber = 0, int pageSize =0)
+        {
+            var result = ServicesProduct.GetAllArchive(pageNumber, pageSize);
+           if (result.Code == 404) {  return NotFound(result);}  return Ok(result);
+        }
         #endregion
       
         #region Get : api/Product/GetById
@@ -61,9 +67,13 @@ namespace BackEnd.Web.Controllers
             var result = ServicesProduct.Delete(id);
            if (result.Code == 404) {  return NotFound(result);}  return Ok(result);
         }
+        [HttpGet("RemoveFromDB")]
+        public ActionResult<IResponseDTO> RemoveFromDB(int id)
+        {
+            var result = ServicesProduct.RemoveFromDB(id);
+           if (result.Code == 404) {  return NotFound(result);}  return Ok(result);
+        }
         #endregion
-
-       
         #region Post : api/Product/SaveNew
         [HttpPost("SaveNew")]
         public ActionResult<IResponseDTO> SaveNew([FromBody] ProductDto model)
@@ -72,5 +82,32 @@ namespace BackEnd.Web.Controllers
            if (result.Code == 404) {  return NotFound(result);}  return Ok(result);
         }
         #endregion
+
+        #region Post : api/Product/SaveNew
+        [HttpPost("Addfavourite")]
+        public ActionResult<IResponseDTO> SaveNew([FromBody] ProductsFavouriteVm model)
+        {
+            var result = ServicesProduct.favourite(model);
+            if (result.Code == 404)
+            { return NotFound(result); }
+            return Ok(result);
+        }
+        #endregion
+        #region Delete : api/Product/Delete
+        [HttpGet("DeleteProductFavourite")]
+        public ActionResult<IResponseDTO> DeleteProductFavourite(int id)
+        {
+            var result = ServicesProduct.DeleteProductFavourite(id);
+            if (result.Code == 404) { return NotFound(result); }
+            return Ok(result);
+        }
+        #endregion
+        [HttpGet("GetAllFavouriteUser")] 
+        public ActionResult<IResponseDTO> GetAllFavouriteUser(int pageNumber = 0, int pageSize = 0,  string ApplicationUserId = "")
+        {
+            var result = ServicesProduct.GetAllProdcutUser(pageNumber, pageSize, ApplicationUserId);
+            if (result.Code == 404) { return NotFound(result); }
+            return Ok(result);
+        }
     }
 }

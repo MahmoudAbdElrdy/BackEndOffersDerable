@@ -15,5 +15,6 @@ namespace BackEnd.Service.IService
         IResponseDTO Delete(int id);
         IResponseDTO Update(CategoryDto entity);
         IResponseDTO Remove(CategoryDto entity);
+        IResponseDTO GetAllCities(int pageNumber = 0, int pageSize = 0);
     }
 }

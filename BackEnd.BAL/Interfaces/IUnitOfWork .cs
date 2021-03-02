@@ -24,6 +24,8 @@ namespace BackEnd.BAL.Interfaces
         IGenericRepository<Rating> Rating{ get; }  
         IGenericRepository<Client> Client { get; }  
         IGenericRepository<Purchases> Purchases{ get; }  
+        IGenericRepository<ProductFavourite> ProductFavourite { get; }  
+        IGenericRepository<tblCities> Cities { get; }  
        
     }
 }

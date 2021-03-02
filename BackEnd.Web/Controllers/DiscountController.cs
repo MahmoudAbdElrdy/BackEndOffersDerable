@@ -36,9 +36,9 @@ namespace BackEnd.Web.Controllers
         #endregion
         #region Get : api/Discount/GetAll
         [HttpGet("GetAllProdcut")]
-        public ActionResult<IResponseDTO> GetAllProdcut(int pageNumber = 0, int pageSize = 0, int CategoryId = 0)
+        public ActionResult<IResponseDTO> GetAllProdcut(int pageNumber = 0, int pageSize = 0, int CategoryId = 0, int CityId = 0,string ProdcutName="", string ApplicationUserId = "")
         {
-            var result = ServicesDiscount.GetAllProdcut(pageNumber, pageSize, CategoryId);
+            var result = ServicesDiscount.GetAllProdcut(pageNumber, pageSize, CategoryId,CityId,ProdcutName, ApplicationUserId);
              if (result.Code == 404) {  return NotFound(result);}  return Ok(result);
         }
         #endregion

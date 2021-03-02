@@ -115,17 +115,8 @@ namespace BackEnd.Service.Service
 
         public async Task<IResponseDTO> RegisterAsync(string  Role, string fullName, string UserName, string Email, string Password, string Image, string PhoneNumber)
         {
-            var existingUser = await _userManager.FindByEmailAsync(Email);
-            var UserId = "";
-            if (existingUser != null)
-            {
-                return new ResponseDTO
-                {
-                    Data = null,
-                    Code = 404,
-                    Message = "User with this email adress already Exist"
-                };
-            }
+             var UserId = "";
+           
             var existingUser2 = _dataContext.Users.Where(x => x.PhoneNumber == PhoneNumber);
             if (existingUser2.Count() > 0)
             {
@@ -156,16 +147,15 @@ namespace BackEnd.Service.Service
            
             if (!string.IsNullOrEmpty(Role)&&(Role== "Admin"||Role== "Client"||Role== "Company"))
             {
-                var createdUser = await _userManager.CreateAsync(newUser, Password);
-                UserId = newUser.Id;
-                if(Role== "Client")
+                if (string.IsNullOrEmpty(newUser.UserName))
                 {
-                    Client client = new Client();
-                    client.ApplicationUserId = newUser.Id;
-                    _unitOfWork.Client.Insert(client);
-                    _unitOfWork.Save();
-                    
+                    newUser.UserName = PhoneNumber;
                 }
+                if (string.IsNullOrEmpty(newUser.Email))
+                {
+                    newUser.Email = PhoneNumber;
+                }
+                var createdUser = await _userManager.CreateAsync(newUser, Password);
                 if (!createdUser.Succeeded)
                 {
                     return new ResponseDTO
@@ -176,6 +166,16 @@ namespace BackEnd.Service.Service
                     };
 
                 }
+                UserId = newUser.Id;
+                if(Role== "Client")
+                {
+                    Client client = new Client();
+                    client.ApplicationUserId = newUser.Id;
+                    _unitOfWork.Client.Insert(client);
+                    _unitOfWork.Save();
+                    
+                }
+               
                 
 
                 await _userManager.AddToRoleAsync(newUser,Role);
