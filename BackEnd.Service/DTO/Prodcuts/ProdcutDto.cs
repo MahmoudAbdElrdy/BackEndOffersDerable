@@ -43,6 +43,6 @@ namespace BackEnd.Service.DTO.Prodcuts
     public class ProductsFavouriteVm
     {
         public string ApplicationUserId { get; set; } 
-        public int? ProductId { get; set; }
+        public int? DiscountId { get; set; }
     }
 }

@@ -95,9 +95,9 @@ namespace BackEnd.Web.Controllers
         #endregion
         #region Delete : api/Product/Delete
         [HttpGet("DeleteProductFavourite")]
-        public ActionResult<IResponseDTO> DeleteProductFavourite(int id)
+        public ActionResult<IResponseDTO> DeleteProductFavourite(string ApplicationUserId = "", int DiscountId = 0)
         {
-            var result = ServicesProduct.DeleteProductFavourite(id);
+            var result = ServicesProduct.DeleteProductFavourite(ApplicationUserId, DiscountId);
             if (result.Code == 404) { return NotFound(result); }
             return Ok(result);
         }

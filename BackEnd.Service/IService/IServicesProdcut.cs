@@ -17,7 +17,7 @@ namespace BackEnd.Service.IService
         IResponseDTO Remove(ProductDto entity);
         IResponseDTO GetAllProdcutUser(int pageNumber = 0, int pageSize = 0, string ApplicationUserId = "");
         IResponseDTO favourite(ProductsFavouriteVm ProductFavVm);
-        IResponseDTO DeleteProductFavourite(int id);
+        IResponseDTO DeleteProductFavourite(string ApplicationUserId = "",int DiscountId = 0);
         IResponseDTO RemoveFromDB(int id);
         IResponseDTO GetAllArchive(int pageNumber = 0, int pageSize = 0);
     }

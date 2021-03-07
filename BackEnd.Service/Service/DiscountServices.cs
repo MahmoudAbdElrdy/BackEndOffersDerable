@@ -258,7 +258,7 @@ namespace BackEnd.Service.Service
                     var Fav = GetAllProdcutUser(ApplicationUserId);
                     foreach(var item in Res)
                     {
-                        if (Fav.Any(i => i.ApplicationUserId== ApplicationUserId&&i.ProductId==item.ProductId))
+                        if (Fav.Any(i => i.ApplicationUserId== ApplicationUserId&&i.DiscountId==item.Id))
                         {
                             item.IsFavourite = true;
                         }

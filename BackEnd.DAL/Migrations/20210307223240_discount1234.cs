@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace BackEnd.DAL.Migrations
 {
-    public partial class Favourite : Migration
+    public partial class discount1234 : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -17,7 +17,8 @@ namespace BackEnd.DAL.Migrations
                     LastEditDate = table.Column<DateTime>(nullable: true),
                     IsDelete = table.Column<bool>(nullable: true),
                     ApplicationUserId = table.Column<string>(nullable: true),
-                    ProductId = table.Column<int>(nullable: true)
+                    DiscountId = table.Column<int>(nullable: true),
+                   // ProductId = table.Column<int>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -29,11 +30,17 @@ namespace BackEnd.DAL.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_ProductFavourite_Product_ProductId",
-                        column: x => x.ProductId,
-                        principalTable: "Product",
+                        name: "FK_ProductFavourite_Discount_DiscountId",
+                        column: x => x.DiscountId,
+                        principalTable: "Discount",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
+                    //table.ForeignKey(
+                    //    name: "FK_ProductFavourite_Product_ProductId",
+                    //    column: x => x.ProductId,
+                    //    principalTable: "Product",
+                    //    principalColumn: "Id",
+                    //    onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateIndex(
@@ -42,9 +49,14 @@ namespace BackEnd.DAL.Migrations
                 column: "ApplicationUserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ProductFavourite_ProductId",
+                name: "IX_ProductFavourite_DiscountId",
                 table: "ProductFavourite",
-                column: "ProductId");
+                column: "DiscountId");
+
+            //migrationBuilder.CreateIndex(
+            //    name: "IX_ProductFavourite_ProductId",
+            //    table: "ProductFavourite",
+            //    column: "ProductId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)

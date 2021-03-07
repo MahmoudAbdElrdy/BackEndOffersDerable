@@ -239,11 +239,11 @@ namespace BackEnd.Service.Service
                 var result = _unitOfWork.ProductFavourite.Get(x=>x.ApplicationUserId==ApplicationUserId
                     && x.IsDelete == false
                 ,
-                    includeProperties: "Products.ProductImages,Products.Category,Products.Company.User",
+                    includeProperties: "Discount.Product.ProductImages,Discount.Product.Category,Discount.Product.Company.User",
                     page: pageNumber, Take: pageSize).ToList();
                 if (result != null && result.Count > 0)
                 {
-                    var Prodcut = result.Select(x=>x.Products).ToList();
+                    var Prodcut = result.Select(x=>x.Discounts).ToList();
                     var resultList = _mapper.Map<List<ShowProductDto>>(Prodcut);
 
                     _response.Data = resultList;
@@ -266,10 +266,10 @@ namespace BackEnd.Service.Service
             }
             return _response;
         }
-        private bool favouriteCheck(string ApplicationUserId, int? ProductId)
+        private bool favouriteCheck(string ApplicationUserId, int? DiscountId) 
         {
 
-            var favouriteList = _unitOfWork.ProductFavourite.Get(x => x.ApplicationUserId == ApplicationUserId && x.ProductId == ProductId).ToList();
+            var favouriteList = _unitOfWork.ProductFavourite.Get(x => x.ApplicationUserId == ApplicationUserId && x.DiscountId == DiscountId).ToList();
             if (favouriteList != null && favouriteList.Count >= 1)
             {
                 return false;
@@ -282,10 +282,10 @@ namespace BackEnd.Service.Service
         }
         public IResponseDTO favourite(ProductsFavouriteVm ProductFavVm)
         {
-            if (favouriteCheck(ProductFavVm.ApplicationUserId, ProductFavVm.ProductId))
+            if (favouriteCheck(ProductFavVm.ApplicationUserId, ProductFavVm.DiscountId))
             {
                 var Favourite = new ProductFavourite();
-                Favourite.ProductId = ProductFavVm.ProductId;
+                Favourite.DiscountId = ProductFavVm.DiscountId;
                 Favourite.ApplicationUserId = ProductFavVm.ApplicationUserId;
                 _unitOfWork.ProductFavourite.Insert(Favourite);
              var Res=_unitOfWork.Save();
@@ -323,20 +323,21 @@ namespace BackEnd.Service.Service
             }
 
         }
-        public IResponseDTO DeleteProductFavourite(int id) 
+        public IResponseDTO DeleteProductFavourite(string ApplicationUserId = "", int DiscountId = 0) 
         {
             try
             {
 
-                var DbProdcut = _unitOfWork.ProductFavourite.GetByID(id);
+                var DbProdcut = _unitOfWork.ProductFavourite.Get(x=>x.ApplicationUserId==ApplicationUserId&&x.DiscountId==DiscountId).FirstOrDefault();
                 DbProdcut.IsDelete = true;
                 DbProdcut.LastEditDate = DateTime.UtcNow.AddHours(2);
+                if(DbProdcut!=null)
                 _unitOfWork.ProductFavourite.Delete(DbProdcut);
                 var save = _unitOfWork.Save();
 
                 if (save == "200")
                 {
-                    _response.Data = id;
+                    _response.Data = DiscountId;
                     _response.Code = 200;
                     _response.Message = "OK";
                 }
@@ -402,7 +403,7 @@ namespace BackEnd.Service.Service
                 DbProdcut.IsDelete = true;
                 DbProdcut.LastEditDate = DateTime.UtcNow.AddHours(2);
                 var Images = _unitOfWork.ProductImages.Get(x => x.ProductId == id);
-                var ProductFavourites = _unitOfWork.ProductFavourite.Get(x => x.ProductId == id);
+                var ProductFavourites = _unitOfWork.ProductFavourite.Get(x => x.Discounts.ProductId == id);
                 var DisCount = _unitOfWork.Discount.Get(x=>x.ProductId==id);
                 if (DisCount.Count()>0)
                 {

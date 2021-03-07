@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BackEnd.DAL.Migrations
 {
     [DbContext(typeof(BakEndContext))]
-    [Migration("20210301144222_Favourite")]
-    partial class Favourite
+    [Migration("20210307223240_discount1234")]
+    partial class discount1234
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -304,6 +304,9 @@ namespace BackEnd.DAL.Migrations
                     b.Property<DateTime?>("CreationDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<int?>("DiscountId")
+                        .HasColumnType("int");
+
                     b.Property<bool?>("IsDelete")
                         .HasColumnType("bit");
 
@@ -316,6 +319,8 @@ namespace BackEnd.DAL.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("ApplicationUserId");
+
+                    b.HasIndex("DiscountId");
 
                     b.HasIndex("ProductId");
 
@@ -723,7 +728,11 @@ namespace BackEnd.DAL.Migrations
                         .WithMany("ProductFavourites")
                         .HasForeignKey("ApplicationUserId");
 
-                    b.HasOne("BackEnd.DAL.Entities.Product", "Products")
+                    b.HasOne("BackEnd.DAL.Entities.Discount", "Discounts")
+                        .WithMany()
+                        .HasForeignKey("DiscountId");
+
+                    b.HasOne("BackEnd.DAL.Entities.Product", null)
                         .WithMany("ProductFavourites")
                         .HasForeignKey("ProductId");
                 });

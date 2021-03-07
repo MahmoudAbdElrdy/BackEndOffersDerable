@@ -10,8 +10,8 @@ namespace BackEnd.DAL.Entities
         [ForeignKey("ApplicationUser")]
         public string ApplicationUserId { get; set; } 
         public  ApplicationUser ApplicationUser { get; set; }
-        [ForeignKey("Product")]
-        public int? ProductId { get; set; }
-        public  Product Products { get; set; } 
+        
+        public int? DiscountId { get; set; }
+        public  Discount Discounts { get; set; }  
     }
 }
