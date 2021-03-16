@@ -239,12 +239,12 @@ namespace BackEnd.Service.Service
                 var result = _unitOfWork.ProductFavourite.Get(x=>x.ApplicationUserId==ApplicationUserId
                     && x.IsDelete == false
                 ,
-                    includeProperties: "Discount.Product.ProductImages,Discount.Product.Category,Discount.Product.Company.User",
+                    includeProperties: "Discounts.Product.ProductImages,Discounts.Product.Category,Discounts.Product.Company.User",
                     page: pageNumber, Take: pageSize).ToList();
                 if (result != null && result.Count > 0)
                 {
                     var Prodcut = result.Select(x=>x.Discounts).ToList();
-                    var resultList = _mapper.Map<List<ShowProductDto>>(Prodcut);
+                    var resultList = _mapper.Map<List<ShowListProductDto>>(Prodcut);
 
                     _response.Data = resultList;
                     _response.Code = 200;

@@ -28,7 +28,7 @@ namespace Project.Controllers.V1
         public async Task<ActionResult<IResponseDTO>> Register([FromBody] UserRegisteration request)
         {
 
-            var authResponse = await _identityService.RegisterAsync(request.Role,request.FullName, request.UserName, request.Email, request.Password,request.Image,request.PhoneNumber);
+            var authResponse = await _identityService.RegisterAsync(request.Role,request.FullName, request.UserName, request.Email, request.Password,request.Image,request.PhoneNumber,request.Token);
             authResponse.Data = authResponse.Data;
             if(authResponse.Code==404)
             {
@@ -190,5 +190,18 @@ namespace Project.Controllers.V1
             }
            // return Ok(res);
         }
+        #region Put : api/Category/Update
+        [HttpPost("Update")]
+        public ActionResult<IResponseDTO> Update([FromBody] ClientTokenDto model)
+        {
+
+            var result = _identityService.UpdateToken(model);
+            if (result.Code == 404)
+            {
+                return NotFound(result);
+            }
+            return Ok(result);
+        }
+        #endregion
     }
 }

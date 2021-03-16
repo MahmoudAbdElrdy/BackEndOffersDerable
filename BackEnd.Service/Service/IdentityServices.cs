@@ -84,9 +84,61 @@ namespace BackEnd.Service.Service
                     Message = "User Must Send Verfication Code"
                 };
             }
+            //else
+            //{
+            //    ClientTokenDto client = new ClientTokenDto();
+            //    client.ApplicationUserId = user.Id;
+            //    client.Token = Token;
+            //}
             return await GenerateAutheticationForResultForUser(user);
         }
+        public IResponseDTO UpdateToken(ClientTokenDto model)
+        {
+            try
+            {
+                var data = _unitOfWork.Client.Get(x => x.ApplicationUserId == model.ApplicationUserId).FirstOrDefault();
 
+                if (data != null)
+                {
+                    if (data.Token != model.Token)
+                    {
+                        data.Token = model.Token;
+                        data.LastEditDate = DateTime.UtcNow.AddHours(2);
+                        _unitOfWork.Client.Update(data);
+                    }
+                    var save = _unitOfWork.Save();
+
+                    if (save == "200")
+                    {
+                        var CustomerDto = _mapper.Map<Client>(data);
+                        _response.Data = CustomerDto;
+                        _response.Code = 200;
+                        _response.Message = "تمت العملية بنجاح";
+                    }
+                    else
+                    {
+                        _response.Data = null;
+                        _response.Code = 404;
+                          _response.Message = "عفوا : حدث خطأ حاول مرة اخرى  !!!";
+                    }
+                }
+                else
+                {
+                    _response.Data = null;
+                    _response.Code = 404;
+                    _response.Message = "عفوا : البيانات المرسلة غير صحيحة أو غير كافية لم يتم العثور على المطلوب !!!";
+                }
+            }
+            catch (Exception ex)
+            {
+                var error = "Error " + string.Format("{0} - {1} ", ex.Message, ex.InnerException != null ? ex.InnerException.FullMessage() : "");
+                _response.Data = null;
+                _response.Code = 404;
+          _response.Message = ex.Message;
+               
+            }
+            return _response;
+        }
 
         private ClaimsPrincipal GetPrincipalFromToken(string Token)
         {
@@ -113,7 +165,7 @@ namespace BackEnd.Service.Service
               StringComparison.InvariantCultureIgnoreCase);
         }
 
-        public async Task<IResponseDTO> RegisterAsync(string  Role, string fullName, string UserName, string Email, string Password, string Image, string PhoneNumber)
+        public async Task<IResponseDTO> RegisterAsync(string  Role, string fullName, string UserName, string Email, string Password, string Image, string PhoneNumber, string Token)
         {
              var UserId = "";
            
@@ -151,10 +203,10 @@ namespace BackEnd.Service.Service
                 {
                     newUser.UserName = PhoneNumber;
                 }
-                if (string.IsNullOrEmpty(newUser.Email))
-                {
-                    newUser.Email = PhoneNumber;
-                }
+                //if (string.IsNullOrEmpty(newUser.Email))
+                //{
+                //    newUser.Email = PhoneNumber;
+                //}
                 var createdUser = await _userManager.CreateAsync(newUser, Password);
                 if (!createdUser.Succeeded)
                 {
@@ -171,6 +223,7 @@ namespace BackEnd.Service.Service
                 {
                     Client client = new Client();
                     client.ApplicationUserId = newUser.Id;
+                    client.Token = Token;
                     _unitOfWork.Client.Insert(client);
                     _unitOfWork.Save();
                     

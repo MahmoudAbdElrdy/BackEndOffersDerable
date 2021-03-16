@@ -1,15 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 using System.Text;
 
-namespace BackEnd.DAL.Entities
+namespace BackEnd.Service.DTO.Client
 {
-  public  class NotificationClient
+ public   class NotificationClientDto
     {
-        [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int NotificationCid { get; set; }
         public int? ClientId { get; set; }
         public string Title { get; set; }
@@ -17,12 +13,22 @@ namespace BackEnd.DAL.Entities
         public string Notes { get; set; }
         public string ImageUrl { get; set; }
         public bool? IsRead { get; set; }
-        public bool? IsAvailable { get; set; } 
+        public bool? IsAvailable { get; set; }
         public DateTime? ExpiryDate { get; set; }
         public DateTime? CreationDate { get; set; }
         public DateTime? LastEditDate { get; set; }
         public bool? IsDelete { get; set; }
 
-        public Client Client { get; set; }
     }
+    public class NotificationDto 
+    {
+        public int NotificationCid { get; set; }
+        public List<int?> Clients { get; set; } 
+        public string Content { get; set; }
+        public string Title { get; set; }
+        public string Token { get; set; }
+        public List<string> Tokens { get; set; } 
+    }
+
+
 }

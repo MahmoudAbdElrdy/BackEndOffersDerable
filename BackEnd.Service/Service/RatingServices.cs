@@ -159,9 +159,12 @@ namespace BackEnd.Service.Service
         {
             try
             {
+                var Client = _unitOfWork.Client.Get(x => x.ApplicationUserId == model.ApplicationUserId).FirstOrDefault();
+               
                 var Dto = _mapper.Map<Rating>(model);
-              //  Dto.CreationDate = DateTime.Now;
-
+                Dto.CreationDate = DateTime.Now;
+                if (Client != null)
+                    Dto.ClientId = Client.Id;
                 var DBmodel =  _unitOfWork.Rating.Insert(Dto);
 
                 var save =  _unitOfWork.Save();

@@ -12,5 +12,6 @@ namespace BackEnd.DAL.Entities
         public string Longitude { get; set; }
         public string Latitude { get; set; }
         public string CompanyDescription { get; set; } 
+        public string Token { get; set; }
     }
 }

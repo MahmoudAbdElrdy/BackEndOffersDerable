@@ -26,5 +26,6 @@ namespace BackEnd.DAL.Context
     public DbSet<Product> Product{ get; set; }
     public DbSet<ProductImages> ProductImages{ get; set; }
     public DbSet<Review> Review { get; set; }
+    public DbSet<NotificationClient> NotificationClient { get; set; } 
   }
 }

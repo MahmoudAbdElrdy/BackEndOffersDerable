@@ -7,11 +7,12 @@ namespace BackEnd.Service.DTO.Prodcuts
   public  class RatingDto
     {
         public int Id { get; set; }
-        public DateTime? CreationDate { get; set; }
+        public DateTime? CreationDate { get; set; } = DateTime.Now;
         public int? DiscountId { get; set; }
         public int? ClientId { get; set; }
         public double? RatingValue { get; set; }
         public string RatingText { get; set; }
+        public string ApplicationUserId { get; set; }
     }
     public class ShowRatingDto 
     {

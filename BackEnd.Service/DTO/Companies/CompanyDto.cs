@@ -12,6 +12,7 @@ namespace BackEnd.Service.DTO.Companies
         public string Latitude { get; set; }
         public string CompanyDescription { get; set; }
         public UserRegisteration User { get; set; }
+        public string Token { get; set; }
     }
     public class ShowCompanyDto 
     {

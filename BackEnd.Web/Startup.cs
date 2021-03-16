@@ -199,6 +199,7 @@ namespace BackEnd.Web
             services.AddScoped<ICategoryServices, CategoryServices>();
             services.AddScoped<IProdcutServices, ProdcutServices>();
             services.AddScoped<ICompanyServices, CompanyServices>();
+            services.AddScoped<IServicesNotificationCustomer, ServicesNotificationCustomer>();
             services.AddSpaStaticFiles(configuration => {
                 configuration.RootPath = "FrontEnd/dist";
             });

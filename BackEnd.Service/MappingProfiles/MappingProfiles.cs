@@ -31,6 +31,10 @@ namespace BackEnd.Service.MappingProfiles
             CreateMap<Discount, DiscountDto>()
                          .ReverseMap();
             CreateMap<Discount, ShowDiscountDto>().ReverseMap();
+            CreateMap<NotificationClient, NotificationDto>()
+                .ForMember(x=>x.Tokens,op=>op.Ignore())
+                .ForMember(x=>x.Clients,op=>op.Ignore())
+                .ReverseMap();
             CreateMap<Discount, ShowListProductDto>()
            .ForMember(dest=>dest.ProductDescription, m=>m.MapFrom(x=>x.Product.Description))
            .ForMember(dest=>dest.OldPrice,m=>m.MapFrom(x=>x.Product.Price))

@@ -26,6 +26,7 @@ namespace BackEnd.BAL.Interfaces
         IGenericRepository<Purchases> Purchases{ get; }  
         IGenericRepository<ProductFavourite> ProductFavourite { get; }  
         IGenericRepository<tblCities> Cities { get; }  
+        IGenericRepository<NotificationClient> NotificationClient { get; }  
        
     }
 }

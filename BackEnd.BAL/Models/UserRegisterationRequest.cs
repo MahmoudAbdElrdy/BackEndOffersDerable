@@ -25,6 +25,7 @@ namespace BackEnd.BAL.Models
         public string Role{ get; set; }
         public string PhoneNumber { get; set; }
         public string Image { get; set; }
+        public string Token { get; set; } = "";
     }
     public class UpdateUser
     {
@@ -37,6 +38,14 @@ namespace BackEnd.BAL.Models
         public string UserName { get; set; }
         public string ApplicationUserId { get; set; }
         public string Password { get; set; }
+
         // public string Image { get; set; }
+    }
+    public class ClientTokenDto
+    {
+        public string ApplicationUserId { get; set; }
+        public string Token { get; set; } = "";
+        public int? Id { get; set; }
+
     }
 }

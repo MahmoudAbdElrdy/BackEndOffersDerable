@@ -128,7 +128,7 @@ namespace BackEnd.Service.Service
             {
                 model.User.Role = "Company";
                 var insertUser=await identityServices.
-                    RegisterAsync(model.User.Role, model.User.FullName, model.User.UserName, model.User.Email, model.User.Password, model.User.Image, model.User.PhoneNumber);
+                    RegisterAsync(model.User.Role, model.User.FullName, model.User.UserName, model.User.Email, model.User.Password, model.User.Image, model.User.PhoneNumber,model.Token);
              if(insertUser.Code == 200)
                 {
 
@@ -137,7 +137,7 @@ namespace BackEnd.Service.Service
                     Dto.CompanyDescription = model.CompanyDescription;
                     Dto.Latitude = model.Latitude;
                     Dto.Longitude = model.Longitude;
-
+                    Dto.Token = model.Token;
                     var DBmodel = _unitOfWork.Company.Insert(Dto);
 
                     var save = _unitOfWork.Save();

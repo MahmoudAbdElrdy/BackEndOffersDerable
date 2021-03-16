@@ -9,7 +9,8 @@ namespace BackEnd.DAL.Entities
         public string ApplicationUserId { get; set; }
         public ApplicationUser User { get; set; }
         public string Code { get; set; }
-       // public string Longitude { get; set; }
-       // public string Latitude { get; set; }
+        public string Token { get; set; } = "";
+        // public string Longitude { get; set; }
+        // public string Latitude { get; set; }
     }
 }

@@ -119,5 +119,7 @@ namespace BackEnd.BAL.Repository
         public IGenericRepository<ProductFavourite> ProductFavourite { get { return new GenericRepository<ProductFavourite>(Context); } }
 
         public IGenericRepository<tblCities> Cities { get { return new GenericRepository<tblCities>(Context); } }
-    }
+        public IGenericRepository<NotificationClient> NotificationClient { get { return new GenericRepository<NotificationClient>(Context); } }
+
+         }
 }

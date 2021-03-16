@@ -8,7 +8,7 @@ namespace BackEnd.Service.ISercice
 {
   public interface IidentityServices
   {
-        Task<IResponseDTO> RegisterAsync(string Role , string FirstName, string LastName, string Email, string Password, string Image, string PhoneNumber);
+        Task<IResponseDTO> RegisterAsync(string Role , string FirstName, string LastName, string Email, string Password, string Image, string PhoneNumber,string Token);
         Task<IResponseDTO> LoginAsync(string Email, string Password);
         IResponseDTO GetRoles();
         Task<Boolean> sendVerficationToEMail(string Email);
@@ -24,5 +24,6 @@ namespace BackEnd.Service.ISercice
         IResponseDTO GetProfileClient(string UserId); 
         IResponseDTO UpdateUser(UpdateUser user);
         IResponseDTO UpdateImage(string ApplicationUserId, string Image);
+        IResponseDTO UpdateToken(ClientTokenDto model);
     }
 }
