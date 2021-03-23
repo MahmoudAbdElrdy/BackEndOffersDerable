@@ -34,6 +34,7 @@ namespace BackEnd.Service.MappingProfiles
             CreateMap<NotificationClient, NotificationDto>()
                 .ForMember(x=>x.Tokens,op=>op.Ignore())
                 .ForMember(x=>x.Clients,op=>op.Ignore())
+                .ForMember(x=>x.CreationDate,op=>op.Ignore())
                 .ReverseMap();
             CreateMap<Discount, ShowListProductDto>()
            .ForMember(dest=>dest.ProductDescription, m=>m.MapFrom(x=>x.Product.Description))
@@ -84,6 +85,8 @@ namespace BackEnd.Service.MappingProfiles
               .ForMember(x => x.ProductName, x => x.MapFrom(x => x.Product.ProdcutName))
               .ForMember(x => x.PhoneNumber, x => x.MapFrom(x => x.Client.User.PhoneNumber))
               .ReverseMap();
+            CreateMap<NotificationClient, NotificationDto>().ReverseMap();
+            CreateMap<NotificationClient, NotificationClientDto>().ReverseMap();
         }
 
         string getPath()

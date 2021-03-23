@@ -35,68 +35,41 @@ namespace BackEnd.Web.Controllers
         }
         #endregion
 
-        #region Get : api/NotificationClient/GetAvailable
-        [HttpGet("GetAvailable")]
-        public IResponseDTO GetAvailable()
-        {
-            var result = ServicesNotificationClient.GetAvailable();
-            return result;
-        }
-        #endregion
+      
 
-        #region Get : api/NotificationClient/GetById
-        [HttpGet("GetById")]
-        public IResponseDTO GetById(int id)
-        {
-            var result = ServicesNotificationClient.GetByIdAsync(id);
-            return result;
-        }
-        #endregion
+       
 
         #region Get : api/ConstructionLicense/GetByClient
         [HttpGet("GetByClient")]
-        public IResponseDTO GetByClient(int ClientId)
+        public IResponseDTO GetByClient(string ApplicationUserId)
         {
-            var result = ServicesNotificationClient.GetByClient(ClientId);
+            var result = ServicesNotificationClient.GetByClient(ApplicationUserId);
             return result;
         }
         #endregion
 
-        #region Put : api/NotificationClient/Update
-        [HttpPut("Update")]
-        public IResponseDTO Update([FromBody]NotificationClientDto model)
-        {
-
-            var result = ServicesNotificationClient.Update(model);
-            return result;
-        }
-        #endregion
+        
 
         #region Delete : api/NotificationClient/Delete
-        [HttpDelete("Delete")]
-        public IResponseDTO Delete(int id)
+        [HttpDelete("DeleteNotification")]
+        public IResponseDTO DeleteNotification(NotificationDto model)
         {
-            var result = ServicesNotificationClient.Delete(id);
+            var result = ServicesNotificationClient.DeleteNotification(model);
             return result;
         }
         #endregion
 
         #region Put : api/NotificationClient/Remove
         [HttpPut("Remove")]
-        public IResponseDTO Remove([FromBody] NotificationClientDto model)
+        public IResponseDTO Remove(int NotificationCid)
         {
-            var result = ServicesNotificationClient.Remove(model);
+            var result = ServicesNotificationClient.Remove(NotificationCid);
             return result;
         }
         #endregion
 
         #region Post : api/NotificationClient/SaveNew
-        [HttpPost("SaveNew")]
-        public async Task<IResponseDTO> SaveNew([FromBody] NotificationClientDto model)
-        {
-            var result = await ServicesNotificationClient.InsertAsync(model);
-            return result;
-        }
+        
         [HttpPost("SaveNewAdmin")]
         public async Task<IResponseDTO> SaveNew([FromBody] NotificationDto model)
         {

@@ -100,17 +100,26 @@ namespace BackEnd.Service.Service
 
                 if (data != null)
                 {
-                    if (data.Token != model.Token)
+                    var CheckToken= _unitOfWork.Client.Get(x => x.Token == model.Token).ToList();
+                    if (CheckToken != null && CheckToken.Count > 0)
                     {
+                        foreach(var item in CheckToken)
+                        {
+                            item.Token = null;
+                            _unitOfWork.Client.Update(item);
+                        }
+                        
+                    }
+                    
                         data.Token = model.Token;
                         data.LastEditDate = DateTime.UtcNow.AddHours(2);
                         _unitOfWork.Client.Update(data);
-                    }
+                    
                     var save = _unitOfWork.Save();
 
                     if (save == "200")
                     {
-                        var CustomerDto = _mapper.Map<Client>(data);
+                        var CustomerDto = model;
                         _response.Data = CustomerDto;
                         _response.Code = 200;
                         _response.Message = "تمت العملية بنجاح";
@@ -353,9 +362,9 @@ namespace BackEnd.Service.Service
             var TokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes(_jwtSettings.JWT_Secret);
             var claims = new List<Claim> {
-          new Claim(JwtRegisteredClaimNames.Sub,user.Email),
+          new Claim(JwtRegisteredClaimNames.Sub,user.Email!=null?user.Email:user.PhoneNumber),
           new Claim(JwtRegisteredClaimNames.Jti,Guid.NewGuid().ToString()),
-          new Claim(JwtRegisteredClaimNames.Email,user.Email),
+          new Claim(JwtRegisteredClaimNames.Email,user.Email!=null?user.Email:user.PhoneNumber),
           new Claim("id",user.Id)
           };
 

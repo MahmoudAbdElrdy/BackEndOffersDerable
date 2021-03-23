@@ -9,14 +9,15 @@ namespace BackEnd.Service.IService
 {
    public interface IServicesNotificationCustomer
     {
-        Task<IResponseDTO> InsertAsync(NotificationClientDto entity);
+       // Task<IResponseDTO> InsertAsync(NotificationClientDto entity);
         IResponseDTO GetAll();
-        IResponseDTO GetAvailable();
-        IResponseDTO GetByIdAsync(int? id);
-        IResponseDTO GetByClient(int id); 
+      //  IResponseDTO GetAvailable();
+      //  IResponseDTO GetByIdAsync(int? id);
+        IResponseDTO GetByClient(string ApplicationUserId); 
          IResponseDTO Delete(int id);
-        IResponseDTO Update(NotificationClientDto entity);
-        IResponseDTO Remove(NotificationClientDto entity);
+       // IResponseDTO Update(NotificationClientDto entity);
+        IResponseDTO Remove(int id); 
         Task<IResponseDTO> InsertAsync(NotificationDto model);
+        IResponseDTO DeleteNotification(NotificationDto model);
     }
 }

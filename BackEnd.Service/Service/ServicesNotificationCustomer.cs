@@ -29,7 +29,7 @@ namespace BackEnd.Service.Service
         {
             try
             {
-                var result = _unitOfWork.NotificationClient.Get(x => x.IsDelete == false,includeProperties : "Client").ToList();
+                var result = _unitOfWork.NotificationClient.Get(includeProperties : "Client").ToList();
                 if (result != null && result.Count > 0)
                 {
                     var list = new List<NotificationDto>();
@@ -40,18 +40,14 @@ namespace BackEnd.Service.Service
                    
                     foreach (var item in Lists)
                     {
-                        var Res2 = result.GroupBy(a => new ClientGroupingKey(a.ClientId, a.Title))
-                .Where(a => a.Key.Title ==item.Title )
-                .Select(a => a.Key.ClientId)
-                .ToList();
-                        var Res3 = result.GroupBy(a => new ClientGroupingKey2(a.ClientId, a.Title,a.Client.Token))
-              .Where(a => a.Key.Title == item.Title)
-              .Select(a => a.Key.Token)
-              .ToList();
-                        item.Clients = Res2;
-                        item.Tokens = Res3;
+                        var Users = result.Select(x => x).Where(x=>x.Title==item.Title).ToList();
+                        var Clients = Users.Select(x => x.ClientId).ToList();
+                        var Tokenes = Users.Select(x => x.Client.Token).ToList();
+              
+                        item.Clients = Clients;
+                        item.Tokens = Tokenes;
                     }
-                    _response.Data = resultList;
+                    _response.Data = Lists;
                     _response.Code = 200;
                     _response.Message = "OK";
                 }
@@ -73,44 +69,14 @@ namespace BackEnd.Service.Service
         }
         #endregion
 
-        #region GetAvailable()
-        public IResponseDTO GetAvailable()
-        {
-            try
-            {
-                var result = _unitOfWork.NotificationClient.Get(x => x.IsAvailable == true && x.IsDelete == false).ToList();
-                if (result != null && result.Count > 0)
-                {
-                    var resultList = _mapper.Map<List<NotificationClientDto>>(result);
-                    _response.Data = resultList;
-                    _response.Code = 200;
-                    _response.Message = "تمت العملية بنجاح";
-                }
-                else
-                {
-                    _response.Data = null;
-                    _response.Code = 200;
-                    _response.Message = "عفوا : لا توجد بيانات متاحة في الوقت الحالي";
-                }
-            }
-            catch (Exception ex)
-            {
-                var error = "Error " + string.Format("{0} - {1} ", ex.Message, ex.InnerException != null ? ex.InnerException.FullMessage() : "");
-                _response.Data = null;
-                _response.Code = 404;
-                _response.Message = ex.Message;
-            }
-            return _response;
-        }
-        #endregion
-
+      
         #region Remove(NotificationClientDto model)
-        public IResponseDTO Remove(NotificationClientDto model)
+        public IResponseDTO Remove(int NotificationCid)
         {
             try
             {
-                var DBmodel = _mapper.Map<NotificationClient>(model);
-                _unitOfWork.NotificationClient.Delete(DBmodel.NotificationCid);
+               
+                _unitOfWork.NotificationClient.Delete(NotificationCid);
                 var save = _unitOfWork.Save();
                 if (save == "200")
                 {
@@ -136,46 +102,16 @@ namespace BackEnd.Service.Service
         }
         #endregion
 
-        #region GetByIdAsync(Guid? id)
-        public IResponseDTO GetByIdAsync(int? id)
-        {
-            try
-            {
-                var DBmodel = _unitOfWork.NotificationClient.Get(x => x.NotificationCid == id && x.IsDelete == false, includeProperties: "Client").FirstOrDefault();
-                if (DBmodel != null)
-                {
-                    var NotificationClientDto = _mapper.Map<NotificationClientDto>(DBmodel);
-                    _response.Data = NotificationClientDto;
-                    _response.Code = 200;
-                    _response.Message = "تمت العملية بنجاح";
-                }
-                else
-                {
-                    _response.Data = null;
-                    _response.Code = 200;
-                    _response.Message = "عفوا : البيانات المرسلة غير صحيحة أو غير كافية لم يتم العثور على المطلوب !!!";
-                }
-            }
-            catch (Exception ex)
-            {
-                var error = "Error " + string.Format("{0} - {1} ", ex.Message, ex.InnerException != null ? ex.InnerException.FullMessage() : "");
-                _response.Data = null;
-                _response.Code = 404;
-                _response.Message = ex.Message;
-            }
-            return _response;
-        }
-        #endregion
-
+      
         #region GetByClient(Guid id)
-        public IResponseDTO GetByClient(int id)
+        public IResponseDTO GetByClient(string ApplicationUserId)
         {
             try
             {
-                var DBmodel = _unitOfWork.NotificationClient.Get(x => x.ClientId == id && x.IsDelete == false);
+                var DBmodel = _unitOfWork.NotificationClient.Get(x => x.Client.ApplicationUserId == ApplicationUserId);
                 if (DBmodel != null)
                 {
-                    var ConstructionLicenseDto = _mapper.Map<List<NotificationClient>>(DBmodel);
+                    var ConstructionLicenseDto = _mapper.Map<List<NotificationClientDto>>(DBmodel);
                     _response.Data = ConstructionLicenseDto;
                     _response.Code = 200;
                     _response.Message = "تمت العملية بنجاح";
@@ -199,39 +135,39 @@ namespace BackEnd.Service.Service
         #endregion
 
         #region InsertAsync(NotificationClientDto model)
-        public async Task<IResponseDTO> InsertAsync(NotificationClientDto model)
-        {
-            try
-            {
-                var DBClient = _unitOfWork.Client.Get(x => x.Id == model.ClientId).FirstOrDefault();
-                var Dto = _mapper.Map<NotificationClient>(model);
-                var DBmodel = await _unitOfWork.NotificationClient.InsertAsync(Dto);
-                Helper.NotificationHelper.PushNotificationByFirebase(model.Content, model.Title, new List<string>() { DBClient.Code }, null);
-                var save = _unitOfWork.Save();
+        //public async Task<IResponseDTO> InsertAsync(NotificationClientDto model)
+        //{
+        //    try
+        //    {
+        //        var DBClient = _unitOfWork.Client.Get(x => x.Id == model.ClientId).FirstOrDefault();
+        //        var Dto = _mapper.Map<NotificationClient>(model);
+        //        var DBmodel = await _unitOfWork.NotificationClient.InsertAsync(Dto);
+        //        Helper.NotificationHelper.PushNotificationByFirebase(model.Content, model.Title,0,  DBClient.Token , null);
+        //        var save = _unitOfWork.Save();
 
-                if (save == "200")
-                {
-                    var NotificationClientDto = _mapper.Map<NotificationClientDto>(DBmodel);
-                    _response.Data = NotificationClientDto;
-                    _response.Code = 200;
-                    _response.Message = "تمت العملية بنجاح";
-                }
-                else
-                {
-                    _response.Data = null;
-                     _response.Code = 404;
-                    _response.Message = "عفوا : حدث خطأ حاول مرة اخرى  !!!";
-                }
-            }
-            catch (Exception ex)
-            {
-                var error = "Error " + string.Format("{0} - {1} ", ex.Message, ex.InnerException != null ? ex.InnerException.FullMessage() : "");
-                _response.Data = null;
-                _response.Code = 404;
-                _response.Message = ex.Message;
-            }
-            return _response;
-        }
+        //        if (save == "200")
+        //        {
+        //            var NotificationClientDto = _mapper.Map<NotificationClientDto>(DBmodel);
+        //            _response.Data = NotificationClientDto;
+        //            _response.Code = 200;
+        //            _response.Message = "تمت العملية بنجاح";
+        //        }
+        //        else
+        //        {
+        //            _response.Data = null;
+        //             _response.Code = 404;
+        //            _response.Message = "عفوا : حدث خطأ حاول مرة اخرى  !!!";
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        var error = "Error " + string.Format("{0} - {1} ", ex.Message, ex.InnerException != null ? ex.InnerException.FullMessage() : "");
+        //        _response.Data = null;
+        //        _response.Code = 404;
+        //        _response.Message = ex.Message;
+        //    }
+        //    return _response;
+        //}
         public async Task<IResponseDTO> InsertAsync(NotificationDto model)
         {
             try
@@ -239,9 +175,13 @@ namespace BackEnd.Service.Service
                 foreach(var item in model.Clients)
                 {
                     var DBClient = _unitOfWork.Client.Get(x => x.Id == item).FirstOrDefault();
-                    var Dto = _mapper.Map<NotificationClient>(model);
+                    var Dto =new NotificationClient();
+                    Dto.ClientId = item;
+                    Dto.Content = model.Content;
+                    Dto.Title = model.Title;
+                    Dto.CreationDate = DateTime.Now;
                     var DBmodel = await _unitOfWork.NotificationClient.InsertAsync(Dto);
-                    Helper.NotificationHelper.PushNotificationByFirebase(model.Content, model.Title, new List<string>() { DBClient.Token }, null);
+                    Helper.NotificationHelper.PushNotificationByFirebase(model.Content, model.Title,0, DBClient.Token, null);
 
                 }
                 var save = _unitOfWork.Save();
@@ -273,52 +213,52 @@ namespace BackEnd.Service.Service
         #endregion
 
         #region Update(NotificationClientDto model)
-        public IResponseDTO Update(NotificationClientDto model)
-        {
-            try
-            {
-                model.LastEditDate = DateTime.UtcNow.AddHours(2);
-                var DbNotificationClient = _mapper.Map<NotificationClient>(model);
-                _unitOfWork.NotificationClient.Update(DbNotificationClient);
-                var save = _unitOfWork.Save();
+        //public IResponseDTO Update(NotificationClientDto model)
+        //{
+        //    try
+        //    {
+        //        model.LastEditDate = DateTime.UtcNow.AddHours(2);
+        //        var DbNotificationClient = _mapper.Map<NotificationClient>(model);
+        //        _unitOfWork.NotificationClient.Update(DbNotificationClient);
+        //        var save = _unitOfWork.Save();
 
-                if (save == "200")
-                {
-                    _response.Data = model;
-                    _response.Code = 200;
-                    _response.Message = "تمت العملية بنجاح";
-                }
-                else
-                {
-                    _response.Data = null;
-                       _response.Code = 404;
-                    _response.Message = "عفوا : حدث خطأ حاول مرة اخرى  !!!";
-                }
-            }
-            catch (Exception ex)
-            {
-                var error = "Error " + string.Format("{0} - {1} ", ex.Message, ex.InnerException != null ? ex.InnerException.FullMessage() : "");
-                _response.Data = null;
-                _response.Code = 404;
-                _response.Message = ex.Message;
-            }
-            return _response;
-        }
+        //        if (save == "200")
+        //        {
+        //            _response.Data = model;
+        //            _response.Code = 200;
+        //            _response.Message = "تمت العملية بنجاح";
+        //        }
+        //        else
+        //        {
+        //            _response.Data = null;
+        //               _response.Code = 404;
+        //            _response.Message = "عفوا : حدث خطأ حاول مرة اخرى  !!!";
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        var error = "Error " + string.Format("{0} - {1} ", ex.Message, ex.InnerException != null ? ex.InnerException.FullMessage() : "");
+        //        _response.Data = null;
+        //        _response.Code = 404;
+        //        _response.Message = ex.Message;
+        //    }
+        //    return _response;
+        //}
         #endregion
 
         #region Delete(NotificationClientDto model)
-        public IResponseDTO Delete(int id) 
+        public IResponseDTO Delete(int NotificationCid) 
         {
             try
             {
               
               
-                _unitOfWork.NotificationClient.Delete(id);
+                _unitOfWork.NotificationClient.Delete(NotificationCid);
                 var save = _unitOfWork.Save();
 
                 if (save == "200")
                 {
-                    _response.Data = id;
+                    _response.Data = NotificationCid;
                     _response.Code = 200;
                     _response.Message = "تمت العملية بنجاح";
                 }
@@ -338,33 +278,44 @@ namespace BackEnd.Service.Service
             }
             return _response;
         }
+        public IResponseDTO DeleteNotification(NotificationDto model)  
+        {
+            try
+            {
+                foreach (var item in model.Clients)
+                {
+                    var DBClient = _unitOfWork.NotificationClient.Get(x => x.ClientId == item&&x.Title==model.Title).FirstOrDefault();
+                    if(DBClient!=null)
+                    _unitOfWork.NotificationClient.Delete(DBClient);
+                  
+                }
+                var save = _unitOfWork.Save();
+
+                if (save == "200")
+                {
+                    // var NotificationClientDto = _mapper.Map<NotificationClientDto>(DBmodel);
+                    _response.Data = model;
+                    _response.Code = 200;
+                    _response.Message = "تمت العملية بنجاح";
+                }
+                else
+                {
+                    _response.Data = null;
+                    _response.Code = 404;
+                    _response.Message = "عفوا : حدث خطأ حاول مرة اخرى  !!!";
+                }
+            }
+            catch (Exception ex)
+            {
+                var error = "Error " + string.Format("{0} - {1} ", ex.Message, ex.InnerException != null ? ex.InnerException.FullMessage() : "");
+                _response.Data = null;
+                _response.Code = 404;
+                _response.Message = ex.Message;
+            }
+            return _response;
+        }
         #endregion
     }
-    public class ClientGroupingKey 
-    {
-        public ClientGroupingKey(int? ClientId, string Title) 
-        {
-            ClientId = ClientId;
-            Title = Title;
-        }
-
-        public int? ClientId { get; }
-
-        public string Title { get; }
-    }
-    public class ClientGroupingKey2
-    {
-        public ClientGroupingKey2(int? ClientId, string Title,string Token)
-        {
-            ClientId = ClientId;
-            Title = Title;
-            Token = Token;
-        }
-
-        public int? ClientId { get; }
-
-        public string Title { get; }
-        public string Token { get; } 
-    }
+  
 }
 

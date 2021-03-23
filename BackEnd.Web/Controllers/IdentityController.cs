@@ -191,7 +191,7 @@ namespace Project.Controllers.V1
            // return Ok(res);
         }
         #region Put : api/Category/Update
-        [HttpPost("Update")]
+        [HttpPost("UpdateToken")]
         public ActionResult<IResponseDTO> Update([FromBody] ClientTokenDto model)
         {
 
