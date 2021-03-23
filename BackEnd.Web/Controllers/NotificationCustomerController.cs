@@ -51,8 +51,8 @@ namespace BackEnd.Web.Controllers
         
 
         #region Delete : api/NotificationClient/Delete
-        [HttpDelete("DeleteNotification")]
-        public IResponseDTO DeleteNotification(NotificationDto model)
+        [HttpPost("DeleteNotification")]
+        public IResponseDTO DeleteNotification([FromBody]  NotificationDto model)
         {
             var result = ServicesNotificationClient.DeleteNotification(model);
             return result;
@@ -60,7 +60,7 @@ namespace BackEnd.Web.Controllers
         #endregion
 
         #region Put : api/NotificationClient/Remove
-        [HttpPut("Remove")]
+        [HttpGet("Remove")]
         public IResponseDTO Remove(int NotificationCid)
         {
             var result = ServicesNotificationClient.Remove(NotificationCid);
