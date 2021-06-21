@@ -22,6 +22,7 @@ namespace BackEnd.DAL.Entities
         public Product Product { get; set; }
         public double? NewPrice { get; set; }
         public int? DiscountId { get; set; } 
+        public bool? StatusReceived { get; set; } 
 
     }
 }

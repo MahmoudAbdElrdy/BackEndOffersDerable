@@ -40,6 +40,19 @@ namespace BackEnd.Web.Controllers
           
         }
         #endregion
+        #region Get : api/Purchases/GetAll
+        [HttpGet("GetPurchases")]
+        public ActionResult<IResponseDTO> GetPurchases(int pageNumber = 0, int pageSize = 0)
+        {
+            var result = ServicesPurchases.GetPurchases(pageNumber, pageSize);
+            if (result.Code == 404)
+            {
+                return NotFound(result);
+            }
+            return Ok(result);
+
+        }
+        #endregion
         #region Get : api/Purchases/GetAllClient
         [HttpGet("GetAllClient")]
         public ActionResult<IResponseDTO> GetAllClient(int pageNumber = 0, int pageSize = 0)

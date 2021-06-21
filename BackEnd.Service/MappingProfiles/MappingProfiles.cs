@@ -84,6 +84,7 @@ namespace BackEnd.Service.MappingProfiles
               .ForMember(x => x.quantity, x => x.MapFrom(x => x.quantity))
               .ForMember(x => x.ProductName, x => x.MapFrom(x => x.Product.ProdcutName))
               .ForMember(x => x.PhoneNumber, x => x.MapFrom(x => x.Client.User.PhoneNumber))
+              .ForMember(dest => dest.ProductImages, m => m.MapFrom(x => x.Product.ProductImages.Select(x => x.ProductImage)))
               .ReverseMap();
             CreateMap<NotificationClient, NotificationDto>().ReverseMap();
             CreateMap<NotificationClient, NotificationClientDto>().ReverseMap();

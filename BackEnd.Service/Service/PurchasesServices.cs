@@ -57,6 +57,36 @@ namespace BackEnd.Service.Service
             }
             return _response;
         }
+        public IResponseDTO GetPurchases(int pageNumber = 0, int pageSize = 0)
+        {
+            try
+            {
+                var result = _unitOfWork.
+                    Purchases.
+                    Get( includeProperties: "Client.User,Product.Company.User,Product.ProductImages", page: pageNumber, Take: pageSize).ToList();
+                if (result != null && result.Count > 0)
+                {
+                    var resultList = _mapper.Map<List<ShowPurchasesDto>>(result);
+                    _response.Data = resultList;
+                    _response.Code = 200;
+                    _response.Message = "OK";
+                }
+                else
+                {
+                    _response.Data = null;
+                    _response.Code = 200;
+                    _response.Message = "No Data";
+                }
+            }
+            catch (Exception ex)
+            {
+
+                _response.Data = null;
+                _response.Code = 404;
+                _response.Message = ex.Message;
+            }
+            return _response;
+        }
 
         public IResponseDTO Insert(PurchasesDto entity)
         {
@@ -92,7 +122,8 @@ namespace BackEnd.Service.Service
                    // quantity = entity.quantity,
                     ClientId= Client.Id,
                     NewPrice= entity.NewPrice ,
-                    DiscountId=entity.DiscountId
+                    DiscountId=entity.DiscountId,
+                    StatusReceived=false
                 };
               //  Purchases
                 var DBmodel = _unitOfWork.Purchases.Insert(Purchases);

@@ -10,5 +10,6 @@ namespace BackEnd.Service.IService
         IResponseDTO Insert(PurchasesDto entity);
          IResponseDTO GetPurchasesByUserId(int pageNumber = 0, int pageSize = 0, string ApplicationUserId="");
         IResponseDTO GetAllClient(int pageNumber = 0, int pageSize = 0);
+        IResponseDTO GetPurchases(int pageNumber = 0, int pageSize = 0);
     }
 }

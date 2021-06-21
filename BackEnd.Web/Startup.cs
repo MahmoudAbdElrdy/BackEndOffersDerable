@@ -33,10 +33,6 @@ using EmailService;
 using BackEnd.Service.IService;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.AspNetCore.Http;
-
-
-
-using Microsoft.Extensions.Hosting;
 namespace BackEnd.Web
 {
     public class Startup
