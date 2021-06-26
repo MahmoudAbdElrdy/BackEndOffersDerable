@@ -50,6 +50,7 @@ namespace BackEnd.Service.Service
                     _response.Data = Lists;
                     _response.Code = 200;
                     _response.Message = "OK";
+                    _response.totalRowCount = _unitOfWork.NotificationClient.Count();
                 }
                 else
                 {
@@ -115,6 +116,7 @@ namespace BackEnd.Service.Service
                     _response.Data = ConstructionLicenseDto;
                     _response.Code = 200;
                     _response.Message = "تمت العملية بنجاح";
+                    _response.totalRowCount = _unitOfWork.NotificationClient.Get(x=>x.Client.ApplicationUserId==ApplicationUserId).Count();
                 }
                 else
                 {

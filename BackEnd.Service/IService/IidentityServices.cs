@@ -23,7 +23,10 @@ namespace BackEnd.Service.ISercice
         IResponseDTO GetProfile(string UserId);
         IResponseDTO GetProfileClient(string UserId); 
         IResponseDTO UpdateUser(UpdateUser user);
+        IResponseDTO UpdateUserWeb(UpdateUserWeb user); 
         IResponseDTO UpdateImage(string ApplicationUserId, string Image);
         IResponseDTO UpdateToken(ClientTokenDto model);
+        IResponseDTO GetAll(int pageNumber = 0, int pageSize = 0);
+        IResponseDTO Delete(string id);
     }
 }

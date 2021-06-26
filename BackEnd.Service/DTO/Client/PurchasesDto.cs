@@ -23,7 +23,9 @@ namespace BackEnd.Service.DTO.Client
         public double? NewPrice { get; set; }
         public string ProductName { get; set; } 
         public string PhoneNumber { get; set; }
-        public List<string> ProductImages { get; set; }
+        public string  ProductImages { get; set; }
+        public string UserName { get; set; }
+        public bool? StatusReceived { get; set; }
 
     }
 }

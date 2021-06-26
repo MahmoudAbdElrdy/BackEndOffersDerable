@@ -150,6 +150,16 @@ namespace Project.Controllers.V1
             }
             return Ok(res);
         }
+        [HttpPost("UpdateUserWeb")]
+        public ActionResult<IResponseDTO> UpdateUserWeb([FromBody] UpdateUserWeb User)
+        {
+            var res = _identityService.UpdateUserWeb(User);
+            if (res.Code == 404)
+            {
+                return NotFound(res);
+            }
+            return Ok(res);
+        }
         [HttpPost("UploadImage")]
         public ActionResult<IResponseDTO> Upload(string ApplicationUserId)
         {
@@ -203,5 +213,28 @@ namespace Project.Controllers.V1
             return Ok(result);
         }
         #endregion
+        #region Put : api/Category/Update
+        [HttpGet("GetPage")]
+        public ActionResult<IResponseDTO> GetPage(int pageNumber = 0, int pageSize = 0)
+        {
+
+            var result = _identityService.GetAll(pageNumber, pageSize);
+            if (result.Code == 404)
+            {
+                return NotFound(result);
+            }
+            return Ok(result);
+        }
+        #endregion
+        [HttpGet("Delete")]
+        public ActionResult<IResponseDTO> Delete(string id)
+        {
+            var result = _identityService.Delete(id);
+            if (result.Code == 404)
+            {
+                return NotFound(result);
+            }
+            return Ok(result);
+        }
     }
 }

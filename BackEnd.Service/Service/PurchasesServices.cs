@@ -40,6 +40,7 @@ namespace BackEnd.Service.Service
                     _response.Data = resultList;
                     _response.Code = 200;
                     _response.Message = "OK";
+                    _response.totalRowCount = _unitOfWork.Purchases.Get(x=>x.Client.ApplicationUserId==ApplicationUserId).Count();
                 }
                 else
                 {
@@ -70,6 +71,7 @@ namespace BackEnd.Service.Service
                     _response.Data = resultList;
                     _response.Code = 200;
                     _response.Message = "OK";
+                    _response.totalRowCount = _unitOfWork.Purchases.Count();
                 }
                 else
                 {

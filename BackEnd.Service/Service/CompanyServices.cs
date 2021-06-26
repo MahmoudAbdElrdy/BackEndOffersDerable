@@ -37,6 +37,7 @@ namespace BackEnd.Service.Service
                     _response.Data = resultList;
                     _response.Code = 200;
                     _response.Message = "OK";
+                    _response.totalRowCount = _unitOfWork.Company.Count();
                 }
                 else
                 {
@@ -70,6 +71,7 @@ namespace BackEnd.Service.Service
                     _response.Data = null;
                     _response.Code = 200;
                     _response.Message = "OK";
+                    _response.totalRowCount = _unitOfWork.Company.Count();
                 }
                 else
                 {
@@ -102,6 +104,7 @@ namespace BackEnd.Service.Service
                     _response.Data = CompanyDto;
                     _response.Code = 200;
                     _response.Message = "OK";
+                    _response.totalRowCount = _unitOfWork.Company.Count();
                 }
                 else
                 {
@@ -148,12 +151,14 @@ namespace BackEnd.Service.Service
                         _response.Data = CompanyDto;
                         _response.Code = 200;
                         _response.Message = "OK";
+                        _response.totalRowCount = _unitOfWork.Company.Count();
                     }
                     else
                     {
                         _response.Data = null;
                         _response.Message = save;
                         _response.Code = 404;
+                        _response.totalRowCount = _unitOfWork.Company.Count();
 
                     }
                 }
@@ -205,6 +210,7 @@ namespace BackEnd.Service.Service
                     _response.Data = model;
                     _response.Code = 200;
                     _response.Message = "OK";
+                    _response.totalRowCount = _unitOfWork.Company.Count();
                 }
                 else
                 {
@@ -212,6 +218,7 @@ namespace BackEnd.Service.Service
                 
                    _response.Code = 404;
                     _response.Message = save;
+                    _response.totalRowCount = _unitOfWork.Company.Count();
                 }
             }
             catch (Exception ex)

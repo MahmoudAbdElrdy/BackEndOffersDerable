@@ -36,6 +36,7 @@ namespace BackEnd.Service.Service
                     _response.Data = resultList;
                     _response.Code = 200;
                     _response.Message = "OK";
+                    _response.totalRowCount = _unitOfWork.Prodcut.Count();
                 }
                 else
                 {
@@ -64,6 +65,7 @@ namespace BackEnd.Service.Service
                     _response.Data = resultList;
                     _response.Code = 200;
                     _response.Message = "OK";
+                    _response.totalRowCount = _unitOfWork.Prodcut.Get(x => x.IsDelete == true).Count();
                 }
                 else
                 {

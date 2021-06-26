@@ -675,7 +675,51 @@ namespace BackEnd.Service.Service
             }
             return _response;
         }
+        public IResponseDTO UpdateUserWeb(UpdateUserWeb user) 
+        {
+            try
+            {
+                var User = _unitOfWork.ApplicationUser.GetByID(user.ApplicationUserId);
+                var passwordHasher = new PasswordHasher<ApplicationUser>();
+                if (!string.IsNullOrEmpty(user.Password))
+                    User.PasswordHash = passwordHasher.HashPassword(User, user.Password);
 
+                User.FullName = user.FullName;
+                User.UserName = user.UserName;
+                User.PhoneNumber = user.PhoneNumber;
+                User.Email = user.Email;
+                User.Image = user.Image;
+
+
+                _unitOfWork.ApplicationUser.Update(User);
+
+
+                var Result = _unitOfWork.Save();
+                if (Result == "200")
+                {
+                    _response.Data = null;
+                    _response.Code = 200;
+                    _response.Message = "OK";
+                    _response.totalRowCount = _unitOfWork.ApplicationUser.Count();
+
+                }
+                else
+                {
+                    _response.Data = null;
+                    _response.Code = 404;
+                    _response.Message = Result;
+                    _response.totalRowCount = _unitOfWork.ApplicationUser.Count();
+                }
+
+            }
+            catch (Exception ex)
+            {
+                _response.Data = ex.Message;
+                _response.Code = 404;
+                _response.Message = ex.Message;
+            }
+            return _response;
+        }
         public IResponseDTO UpdateImage(string ApplicationUserId, string Image)
         { 
             try
@@ -830,7 +874,73 @@ namespace BackEnd.Service.Service
                 };
             }
         }
-      
 
+        #region GetAll()
+        public IResponseDTO GetAll(int pageNumber = 0, int pageSize = 0)
+        {
+            try
+            {
+                var result = _unitOfWork.ApplicationUser.Get(page: pageNumber, Take: pageSize).ToList();
+                if (result != null && result.Count > 0)
+                {
+                    var resultList = _mapper.Map<List<UserRegisteration>>(result);
+                    _response.Data = resultList;
+                    _response.Code = 200;
+                    _response.Message = "OK";
+                    _response.totalRowCount = _unitOfWork.ApplicationUser.Count();
+                }
+                else
+                {
+                    _response.Data = null;
+                    _response.Code = 200;
+                    _response.Message = "No Data";
+                }
+            }
+            catch (Exception ex)
+            {
+
+                _response.Data = null;
+                _response.Code = 404;
+                _response.Message = ex.Message;
+            }
+            return _response;
+        }
+        #endregion
+        public IResponseDTO Delete(string id)
+        {
+            try
+            {
+
+                var DbCompany = _unitOfWork.ApplicationUser.GetByID(id);
+                var client = _unitOfWork.Client.GetEntity(x=>x.ApplicationUserId==id);
+                _unitOfWork.Client.Delete(client);
+                _unitOfWork.ApplicationUser.Delete(DbCompany);
+                
+                var save = _unitOfWork.Save();
+
+                if (save == "200")
+                {
+                    _response.Data = id;
+                    _response.Code = 200;
+                    _response.Message = "OK";
+                    _response.totalRowCount = _unitOfWork.ApplicationUser.Count();
+                }
+                else
+                {
+                    _response.Data = null;
+
+                    _response.Code = 404;
+                    _response.Message = save;
+                }
+            }
+            catch (Exception ex)
+            {
+
+                _response.Data = null;
+                _response.Code = 404;
+                _response.Message = ex.Message;
+            }
+            return _response;
+        }
     }
 }
