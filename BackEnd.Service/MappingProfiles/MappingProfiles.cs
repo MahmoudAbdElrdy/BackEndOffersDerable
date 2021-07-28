@@ -37,14 +37,17 @@ namespace BackEnd.Service.MappingProfiles
                 .ForMember(x=>x.CreationDate,op=>op.Ignore())
                 .ReverseMap();
             CreateMap<Discount, ShowListProductDto>()
-           .ForMember(dest=>dest.ProductDescription, m=>m.MapFrom(x=>x.Product.Description))
-           .ForMember(dest=>dest.OldPrice,m=>m.MapFrom(x=>x.Product.Price))
-           .ForMember(dest=>dest.DiscountDescription, m=>m.MapFrom(x=>x.DiscountDescription))
-           .ForMember(dest=>dest.ProductId,m=>m.MapFrom(x=>x.Product.Id))
-           .ForMember(dest=>dest.ProdcutName,m=>m.MapFrom(x=>x.Product.ProdcutName))
-           .ForMember(dest=>dest.ProductImage,m=>m.MapFrom(x=>x.Product.ProductImages.FirstOrDefault().ProductImage))
-           .ForMember(dest=>dest.NewPrice,m=>m.MapFrom(x=> (int)x.DiscountType==1?x.Product.Price-x.DiscountValue:(x.Product.Price-(x.Product.Price * (x.DiscountValue / 100)))))
-                ;
+           .ForMember(dest => dest.ProductDescription, m => m.MapFrom(x => x.Product.Description))
+           .ForMember(dest => dest.OldPrice, m => m.MapFrom(x => x.Product.Price))
+           .ForMember(dest => dest.DiscountDescription, m => m.MapFrom(x => x.DiscountDescription))
+           .ForMember(dest => dest.ProductId, m => m.MapFrom(x => x.Product.Id))
+           .ForMember(dest => dest.ProdcutName, m => m.MapFrom(x => x.Product.ProdcutName))
+           .ForMember(dest => dest.ProductImage, m => m.MapFrom(x => x.Product.ProductImages.FirstOrDefault().ProductImage))
+           .ForMember(dest => dest.NewPrice, m => m.MapFrom(x => (int)x.DiscountType == 1 ? x.Product.Price - x.DiscountValue : (x.Product.Price - (x.Product.Price * (x.DiscountValue / 100)))))
+           .ForMember(dest => dest.NumberDays, m => m.MapFrom(x => (x.EndDate.Value.Date - x.SatrtDate.Value.Date).TotalDays))
+           .ForMember(dest => dest.DiscountRate, m => m.MapFrom(x => (int)x.DiscountType == 2 ?
+         x.DiscountRate : (100 * (x.Product.Price - x.DiscountValue) / x.Product.Price)
+         ));
           CreateMap<Discount,ShowDiscountDto>()
          .ForMember(dest => dest.ProductDescription, m => m.MapFrom(x => x.Product.Description))
          .ForMember(dest => dest.OldPrice, m => m.MapFrom(x => x.Product.Price))

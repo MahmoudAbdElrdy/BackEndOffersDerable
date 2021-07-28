@@ -39,6 +39,8 @@ namespace BackEnd.Service.DTO.Prodcuts
         public string ProductImage  { get; set; }
         public int ProductId { get; set; }
         public bool? IsFavourite { get; set; }
+        public double? DiscountRate { get; set; }
+        public double? NumberDays { get; set; }
     }
     public class ProductsFavouriteVm
     {
